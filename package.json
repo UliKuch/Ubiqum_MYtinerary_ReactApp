@@ -32,7 +32,13 @@
       "last 1 safari version"
     ]
   },
+  "jest": {
+    "snapshotSerializers": [
+      "enzyme-to-json/serializer"
+    ]
+  },
   "devDependencies": {
+    "enzyme-to-json": "^3.4.2",
     "jest": "^24.9.0"
   }
 }
