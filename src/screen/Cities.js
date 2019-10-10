@@ -1,5 +1,10 @@
 import React from 'react';
-import {Navbar, Logo} from './Landing.js';
+import { Navbar, Logo } from './Landing.js';
+
+// redux
+import { connect } from "react-redux";
+import { fetchCities, filterCities } from "../store/actions/cityActions";
+
 
 function CitiesFilter(props) {
   return (
@@ -11,45 +16,24 @@ function CitiesFilter(props) {
 
 
 class Cities extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      isFetching: false,
-      cities: [],
-      filteredCities: [],
-    }
-  }
-
-  fetchCities() {
-    this.setState({isFetching: true});
-    fetch("http://localhost:5000/cities/all")
-      .then(res => res.json())
-      .then(data => this.setState({
-        cities: data,
-        // if this function gets called more often than once, filteredCities has to be defined differently
-        filteredCities: data,
-        isFetching: false,
-      }))
-  }
-
   componentDidMount() {
-    this.fetchCities();
+    // // if redux is not used, thus commented out
+    // this.fetchCities();
+    this.props.fetchCities();
   }
 
   handleCitiesFilterChange(inp) {
     const regex = new RegExp("^" + inp.target.value, "i");
-    const filtCities = this.state.cities.filter(city => {
+    const filtCities = this.props.cities.filter(city => {
       return regex.test(city.name)
     })
-
-    this.setState({
-      filteredCities: filtCities,
-    })
-
+    this.props.filterCities(filtCities);
   }
 
-  render () {
-    const cityList = this.state.filteredCities.map(city => {
+  render () {       
+    console.log(this.props);
+  
+    const cityList = this.props.filteredCities.map(city => {
       return (
         <li key={city.name}>{city.name + ", " + city.country}</li>
       )
@@ -65,11 +49,30 @@ class Cities extends React.Component {
           onChange={(inp) => this.handleCitiesFilterChange(inp)}
         />
         <div>
-          {this.state.isFetching ? <p>Fetching data...</p> : <ul>{cityList}</ul>}
+          {this.props.isFetching ? <p>Fetching data...</p> : <ul>{cityList}</ul>}
         </div>
       </div>
     )
   }
 }
 
-export default Cities;
+function mapStateToProps(state) {
+  return {
+    cities: state.city.cities,
+    filteredCities: state.city.filteredCities,
+    isFetching: state.city.isFetching
+  }
+};
+
+
+const mapDispatchToProps = dispatch => {
+  return {
+    fetchCities: () => dispatch(fetchCities()),
+    filterCities: (filteredCities) => dispatch(filterCities(filteredCities))
+  }
+};
+
+export default connect(
+  mapStateToProps, 
+  mapDispatchToProps
+)(Cities);
