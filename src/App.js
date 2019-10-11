@@ -3,6 +3,7 @@ import './App.css';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import Landing from './screen/Landing.js';
 import Cities from './screen/Cities.js';
+import City from './screen/City.js';
 
 export default class App extends React.Component {
   render() {
@@ -11,7 +12,8 @@ export default class App extends React.Component {
         <div className="App">
           <Switch>
             <Route exact path='/' component={Landing} />
-            <Route path='/cities' component={Cities} />
+            <Route exact path='/cities' component={Cities} />
+            <Route path='/cities/:city' component={City} />
           </Switch>
         </div>
       </BrowserRouter>  

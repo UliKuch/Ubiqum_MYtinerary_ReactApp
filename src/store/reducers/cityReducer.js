@@ -2,7 +2,10 @@ import {
   FETCH_CITIES_REQUEST,
   FETCH_CITIES_FAILURE,
   FETCH_CITIES_SUCCESS,
-  FILTER_CITIES
+  FILTER_CITIES,
+  FIND_CITY_REQUEST,
+  FIND_CITY_FAILURE,
+  FIND_CITY_SUCCESS
 } from "../actions/cityActions"
 
 const initialState = {
@@ -11,7 +14,12 @@ const initialState = {
   isFetching: false
 }
 
-function cityReducer(state = initialState, action) {
+const findCityInitialState = {
+  city: [],
+  isFetching: false
+}
+
+function citiesReducer(state = initialState, action) {
   switch (action.type) {
     case FETCH_CITIES_REQUEST:
       return Object.assign({}, state, {
@@ -36,4 +44,24 @@ function cityReducer(state = initialState, action) {
   }
 }
 
-export default cityReducer
+function findCityReducer(state = findCityInitialState, action) {
+  switch (action.type) {
+    case FIND_CITY_REQUEST:
+      return Object.assign({}, state, {
+        isFetching: true
+      });
+    case FIND_CITY_FAILURE:
+      return Object.assign({}, state, {
+        isFetching: false
+      })
+    case FIND_CITY_SUCCESS:
+      return Object.assign({}, state, {
+        isFetching: false,
+        city: action.city
+      })    
+    default:
+      return state;
+  }
+}
+
+export {citiesReducer, findCityReducer}

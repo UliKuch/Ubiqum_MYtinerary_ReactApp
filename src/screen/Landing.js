@@ -2,12 +2,12 @@ import React from 'react';
 
 function Footer() {
   return (
-    <footer className="footer mt-5">
+    <footer className="footer">
       <div className="d-flex justify-content-center container" style={{ height: 30 }}>
 
         {/* TODO: insert link to home */}
 
-        <a className="h-100" href="/"><img className="h-100" src="./images/homeIcon.png" alt="Clickable home button"/></a>
+        <a className="h-100" href="/"><img className="h-100" src="/images/homeIcon.png" alt="Clickable home button"/></a>
       </div>
     </footer>
   )
@@ -145,7 +145,7 @@ function LandingMain() {
 function Logo() {
   return (
     <div className="d-flex justify-content-center mb-2" style={{ height: 100 }}>
-      <img className="h-100" src="./images/MYtineraryLogo.png" alt="MYtinerary Logo"/>
+      <img className="h-100" src="/images/MYtineraryLogo.png" alt="MYtinerary Logo"/>
     </div>
   )
 }
@@ -155,7 +155,7 @@ function Navbar(props) {
   return (
     <nav className="navbar navbar-light bg-lignt">
         <button type="button" className="btn dropdown" style={{ height: 60 }} data-toggle="dropdown"> 
-        <a className="h-100" href="#"><img className="h-100" src="./images/userIcon.png" alt="Clickable user button"/></a>
+        <a className="h-100" href="#"><img className="h-100" src="/images/userIcon.png" alt="Clickable user button"/></a>
         </button>
         <div className="dropdown-menu" aria-labelledby="dropdownMenu">
           <ul>
@@ -199,4 +199,4 @@ function Landing() {
 
 
 export default Landing;
-export {Navbar, Logo};
+export {Navbar, Logo, Footer};

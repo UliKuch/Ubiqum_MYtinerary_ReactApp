@@ -1,5 +1,5 @@
 import React from 'react';
-import { Navbar, Logo } from './Landing.js';
+import { Navbar, Footer } from './Landing.js';
 
 // redux
 import { connect } from "react-redux";
@@ -17,8 +17,6 @@ function CitiesFilter(props) {
 
 class Cities extends React.Component {
   componentDidMount() {
-    // // if redux is not used, thus commented out
-    // this.fetchCities();
     this.props.fetchCities();
   }
 
@@ -30,27 +28,29 @@ class Cities extends React.Component {
     this.props.filterCities(filtCities);
   }
 
-  render () {       
-    console.log(this.props);
-  
+  render() {
     const cityList = this.props.filteredCities.map(city => {
       return (
-        <li key={city.name}>{city.name + ", " + city.country}</li>
+        <li key={city.name}> 
+          <a href={"/cities/" + city.name}>
+            {city.name + ", " + city.country}
+          </a>
+        </li>
       )
     })
 
     return (
       <div>
         <Navbar
-        NavbarCitiesLink={true}
+          NavbarCitiesLink={true}
         />
-        <Logo />
         <CitiesFilter 
           onChange={(inp) => this.handleCitiesFilterChange(inp)}
         />
         <div>
           {this.props.isFetching ? <p>Fetching data...</p> : <ul>{cityList}</ul>}
         </div>
+        <Footer />
       </div>
     )
   }

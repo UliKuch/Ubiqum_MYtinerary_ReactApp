@@ -1,11 +1,16 @@
-// action types
+// ----- action types -----
 export const FETCH_CITIES_REQUEST = "FETCH_CITIES_REQUEST";
 export const FETCH_CITIES_FAILURE = "FETCH_CITIES_FAILURE";
 export const FETCH_CITIES_SUCCESS = "FETCH_CITIES_SUCCESS";
 export const FILTER_CITIES = "FILTER_CITIES";
+export const FIND_CITY_REQUEST = "FIND_CITY_REQUEST";
+export const FIND_CITY_FAILURE = "FIND_CITY_FAILURE";
+export const FIND_CITY_SUCCESS = "FIND_CITY_SUCCESS";
 
 
-// action creators
+// ----- action creators ------
+
+// fetch cities
 export function fetchCitiesRequest() {
   return {
     type: FETCH_CITIES_REQUEST,
@@ -25,6 +30,8 @@ export function fetchCitiesSuccess(cities) {
   }
 }
 
+
+// filter cities
 export function filterCities(filteredCities) {
   return {
     type: FILTER_CITIES,
@@ -32,7 +39,30 @@ export function filterCities(filteredCities) {
   }
 }
 
-// thunk action creator
+
+// find city
+export function findCityRequest() {
+  return {
+    type: FIND_CITY_REQUEST,
+  }
+}
+
+export function findCityFailure() {
+  return {
+    type: FIND_CITY_FAILURE,
+  }
+}
+
+export function findCitySuccess(city) {
+  return {
+    type: FIND_CITY_SUCCESS,
+    city
+  }
+}
+
+// ----- thunk action creators -----
+
+// fetch cities
 export function fetchCities() {
  
   return function(dispatch) {
@@ -49,6 +79,28 @@ export function fetchCities() {
       )
       .then(data =>
         dispatch(fetchCitiesSuccess(data))
+      )
+  }
+}
+
+
+// find city
+export function findCity(city) {
+ 
+  return function(dispatch) {
+    dispatch(findCityRequest())
+
+    return fetch(`http://localhost:5000/cities/${city}` )
+      .then(
+        res => res.json(),
+        // not using catch, see redux documentation (async actions)
+        err => {
+          dispatch(findCityFailure())
+          console.log("An error occurred. Maybe the requested city is not in our database.", err)
+        }
+      )
+      .then(data =>
+        dispatch(findCitySuccess(data))
       )
   }
 }
