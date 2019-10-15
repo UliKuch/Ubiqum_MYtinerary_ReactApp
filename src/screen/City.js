@@ -1,6 +1,7 @@
 import React from 'react';
 import { Footer } from './Landing.js';
-import Itineraries from '../component/Itinerary.js'
+import Itineraries from '../component/Itineraries.js'
+import Loader from '../component/Loader'
 
 // redux
 import { connect } from "react-redux";
@@ -11,8 +12,8 @@ class City extends React.Component {
 
 
   componentDidMount() {
-    this.props.findCity(this.props.match.params.city);
-
+    const cityInput = this.props.match.params.city;
+    this.props.findCity(cityInput);
   }
 
   render() {
@@ -20,19 +21,17 @@ class City extends React.Component {
 
     return (
       <div>
+        {(this.props.isFetching || !city.name) ? <Loader /> :
+          <div>
+            <h2>{city.name}</h2>
+            <p>Available MYtineraries:</p>
+            <Itineraries
+                cityName={city.name}
+            />  
+          </div>
+        }
 
-      {this.props.isFetching ? <p>Fetching data...</p> :
-        <div>
-          <h2>{city.name}</h2>
-          <p>Available MYtineraries:</p>
-          <Itineraries
-              cityName={city.name}
-          />  
-        </div>
-      }
-
-      <a href=".">Choose another city</a>
-
+        <a href=".">Choose another city</a>
         <Footer />
       </div>
     )

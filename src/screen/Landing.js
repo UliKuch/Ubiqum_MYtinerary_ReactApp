@@ -2,7 +2,7 @@ import React from 'react';
 
 function Footer() {
   return (
-    <footer className="footer">
+    <footer className="footer bg-white">
       <div className="d-flex justify-content-center container" style={{ height: 30 }}>
 
         {/* TODO: insert link to home */}
@@ -155,12 +155,12 @@ function Navbar(props) {
   return (
     <nav className="navbar navbar-light bg-lignt">
         <button type="button" className="btn dropdown" style={{ height: 60 }} data-toggle="dropdown"> 
-        <a className="h-100" href="#"><img className="h-100" src="/images/userIcon.png" alt="Clickable user button"/></a>
+        <a className="h-100" href="/"><img className="h-100" src="/images/userIcon.png" alt="Clickable user button"/></a>
         </button>
         <div className="dropdown-menu" aria-labelledby="dropdownMenu">
           <ul>
-            <li className="dropdown-item"><a href="#">Create Account</a></li>
-            <li className="dropdown-item"><a href="#">Log In</a></li>
+            <li className="dropdown-item"><a href="/">Create Account</a></li>
+            <li className="dropdown-item"><a href="/">Log In</a></li>
           </ul>
         </div>
         <button className="navbar-toggler ml-auto" type="button" data-toggle="collapse" data-target="#collapsingNavbar">

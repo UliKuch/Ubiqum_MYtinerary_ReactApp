@@ -1,5 +1,6 @@
 import React from 'react';
 import { Navbar, Footer } from './Landing.js';
+import Loader from '../component/Loader'
 
 // redux
 import { connect } from "react-redux";
@@ -48,7 +49,7 @@ class Cities extends React.Component {
           onChange={(inp) => this.handleCitiesFilterChange(inp)}
         />
         <div>
-          {this.props.isFetching ? <p>Fetching data...</p> : <ul>{cityList}</ul>}
+          {this.props.isFetching ? <Loader /> : <ul>{cityList}</ul>}
         </div>
         <Footer />
       </div>
