@@ -9,16 +9,21 @@ import { fetchItineraries } from "../store/actions/itineraryActions";
 class Itinerary extends React.Component {
   constructor(props) {
     super(props);
-    // this.state = {
-    //   isExtended: false
-    // }
+    this.state = {
+      rendered: false,
+      extended: false
+    }
   }
 
-  // handleClick() {    
-  //   this.setState(() => ({
-  //     isExtended: !this.state.isExtended
-  //   }))
-  // }
+  // if View All button is clicked for the first time,
+  // the activities are rendered (and hence fetched) and stay rendered;
+  // state.extended switches with every click (in order to change button description)
+  handleClick() {
+      this.setState(() => ({
+        rendered: true,
+        extended: !this.state.extended
+      }))
+  }
 
   render() {
     return (
@@ -63,20 +68,19 @@ class Itinerary extends React.Component {
             </div>
           </div>
         </div>
-        <div id={`collapse${this.props.itin._id}`} className="collapse" aria-labelledby={`heading${this.props.itin._id}`} data-parent="#itinerariesAccordion">
+        <div id={`collapse${this.props.itin._id}`} className="collapse" aria-labelledby={`heading${this.props.itin._id}`}>
           <div className="card-body">
-            {(true) ?
+            {(!this.state.rendered) ||
               <Activities
               cityName={this.props.itin.city}
               itineraryName={this.props.itin.title}
-              /> :
-              ""
+              />
             } 
           </div>
         </div>
         <div className="expandContainer card-footer border-top-0">
-          <button className="btn btn-link" type="button" data-toggle="collapse" data-target={`#collapse${this.props.itin._id}`} aria-expanded="true" aria-controls={`collapse${this.props.itin._id}`}>
-          {(false) ?
+          <button className="btn btn-link collapsed" type="button" data-toggle="collapse" data-target={`#collapse${this.props.itin._id}`} aria-expanded="true" aria-controls={`collapse${this.props.itin._id}`} onClick={() => this.handleClick()}>
+          {this.state.extended ?
           "View Less" :
           "View All"
           }               
