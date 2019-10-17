@@ -1,17 +1,73 @@
 import React from 'react';
-import { Navbar, Footer } from './Landing.js';
+import { Link } from 'react-router-dom';
+
+import Footer from '../component/Footer';
 import Loader from '../component/Loader'
+import Navbar from '../component/Navbar'
 
 // redux
 import { connect } from "react-redux";
 import { fetchCities, filterCities } from "../store/actions/cityActions";
 
+// Material-UI
+import { Container, TextField, List, ListItem, ListItemText } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
 
 function CitiesFilter(props) {
   return (
-    <div className="container">
-      <input className="form-control" type="text" onChange={props.onChange}/>
-    </div>
+    <Container>
+      <TextField 
+      fullWidth
+      margin="dense"
+      variant="outlined"
+      onChange={props.onChange}
+      />
+    </Container>
+  )
+}
+
+// styles instead of makeStyles in order to use props
+const styles = (city) => ({
+  listItem: {
+    backgroundImage: `url(${city})`
+  }
+});
+
+const useStyles = makeStyles(theme => ({
+  listItem: {
+    backgroundPosition: "center",
+    backgroundRepeat: "no-repeat",
+    backgroundSize: "cover",
+    color: "black",
+    textAlign: "center",
+    marginTop: theme.spacing(1),
+    "&:hover": {
+      textDecoration: "none",
+      color: "black",
+    },
+  },
+  listItemText: {
+    backgroundColor: "white",
+    marginRight: theme.spacing(3),
+    marginLeft: theme.spacing(3),
+  }
+}));
+
+function City(props) {
+  const classes = useStyles();
+
+  return(
+    <ListItem
+      component={Link}
+      to={`/cities/${props.city.name}`}
+      style={styles(props.city.img).listItem}
+      className={classes.listItem}
+    >
+      <ListItemText
+        primary={props.city.name}
+        className={classes.listItemText}
+      />
+    </ListItem>
   )
 }
 
@@ -30,27 +86,26 @@ class Cities extends React.Component {
   }
 
   render() {
-    const cityList = this.props.filteredCities.map(city => {
+    const cityList = this.props.filteredCities.map(city => {     
       return (
-        <li key={city.name}> 
-          <a href={"/cities/" + city.name}>
-            {city.name + ", " + city.country}
-          </a>
-        </li>
+        <City
+        key={city.name}
+        city={city}
+        />
       )
     })
 
     return (
       <div>
         <Navbar
-          NavbarCitiesLink={true}
+          selectedMenuItem="Cities"
         />
         <CitiesFilter 
           onChange={(inp) => this.handleCitiesFilterChange(inp)}
         />
-        <div>
-          {this.props.isFetching ? <Loader /> : <ul>{cityList}</ul>}
-        </div>
+        <Container>
+          {this.props.isFetching ? <Loader /> : <List>{cityList}</List>}
+        </Container>
         <Footer />
       </div>
     )

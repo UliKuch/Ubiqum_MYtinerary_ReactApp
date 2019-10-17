@@ -1,5 +1,5 @@
 import React from 'react';
-import { Footer } from './Landing.js';
+import Footer from '../component/Footer';
 import Itineraries from '../component/Itineraries.js'
 import Loader from '../component/Loader'
 

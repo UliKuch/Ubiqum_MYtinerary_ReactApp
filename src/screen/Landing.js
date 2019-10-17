@@ -1,17 +1,17 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
-function Footer() {
-  return (
-    <footer className="footer bg-white">
-      <div className="d-flex justify-content-center container" style={{ height: 30 }}>
+import Navbar from '../component/Navbar'
+import Footer from '../component/Footer'
+import Logo from '../component/Logo'
 
-        {/* TODO: insert link to home */}
+// redux
+import { connect } from "react-redux";
+import { fetchCities } from "../store/actions/cityActions";
 
-        <a className="h-100" href="/"><img className="h-100" src="/images/homeIcon.png" alt="Clickable home button"/></a>
-      </div>
-    </footer>
-  )
-}
+// Material-UI
+import { Container, Typography } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
 
 
 function LandingImages() {
@@ -100,7 +100,6 @@ function LandingImages() {
 }
 
 
-
 function LandingImageBox() {
   return (
     <div className="container">
@@ -127,76 +126,100 @@ function LandingImageBox() {
 }
 
 
-function LandingMain() {
+const useStyles = makeStyles(theme => ({
+  img: {
+    height: "100%"
+  },
+  imageContainer: {
+    height: 100,
+    marginTop: theme.spacing(1),
+    marginBottom: theme.spacing(3),
+  },
+  text: {
+    marginTop: theme.spacing(2),
+    marginBottom: theme.spacing(1),
+
+  }
+}));
+
+function LandingMain(props) {
+  const classes = useStyles();
+
   return (
-    <div className="d-flex flex-column align-items-center">
-      <p style={{ textAlign: "center" }}>Find your perfect trip, designed by insiders who know and love their cities.</p>
-      <h3>Start browsing</h3>
-      <div className="mb-5" style={{ height: 100 }}>
-        <a className="h-100" href="/cities"><img className="h-100" src="./images/circled-right-2.png" alt="Clickable button displaying an arrow."/></a>
-      </div>
-      <p>Popular MYtineraries:</p>
+    <Container>
+      <Typography
+      align="center"
+      className={classes.text}
+      >
+        Find your perfect trip, designed by insiders who know 
+            and love their cities.
+      </Typography>
+      <Container 
+      component={Link}
+      to="/cities"
+      >
+        <Container
+          className={classes.imageContainer}
+        >
+          <img
+            className={classes.img}
+            src="./images/circled-right-2.png"
+            alt="Clickable button displaying an arrow."
+          />
+        </Container>
+      </Container>
+      <Typography
+      align="center"
+      className={classes.text}
+      >
+        Popular MYtineraries:
+      </Typography>
       <LandingImageBox />
+    </Container>
+  )
+}
+
+
+class Landing extends React.Component {
+  componentDidMount() {
+    this.props.fetchCities();
+  }
+
+  render() {
+    const citiesWithImages = this.props.cities.filter(city =>{
+      return city.img
+    })
+
+    return (
+    <div>
+      <Navbar
+        selectedMenuItem="Home"
+      />
+      <Logo />
+      <LandingMain
+        citiesWithImages={citiesWithImages}
+      />
+      <Footer />
     </div>
-  )
+    )
+  }
 }
 
-
-function Logo() {
-  return (
-    <div className="d-flex justify-content-center mb-2" style={{ height: 100 }}>
-      <img className="h-100" src="/images/MYtineraryLogo.png" alt="MYtinerary Logo"/>
-    </div>
-  )
-}
+function mapStateToProps(state) {
+  return {
+    cities: state.city.cities,
+    isFetching: state.city.isFetching
+  }
+};
 
 
-function Navbar(props) {
-  return (
-    <nav className="navbar navbar-light bg-lignt">
-        <button type="button" className="btn dropdown" style={{ height: 60 }} data-toggle="dropdown"> 
-        <a className="h-100" href="/"><img className="h-100" src="/images/userIcon.png" alt="Clickable user button"/></a>
-        </button>
-        <div className="dropdown-menu" aria-labelledby="dropdownMenu">
-          <ul>
-            <li className="dropdown-item"><a href="/">Create Account</a></li>
-            <li className="dropdown-item"><a href="/">Log In</a></li>
-          </ul>
-        </div>
-        <button className="navbar-toggler ml-auto" type="button" data-toggle="collapse" data-target="#collapsingNavbar">
-            <span className="navbar-toggler-icon"></span>
-        </button>
-        <div className="navbar-collapse collapse" id="collapsingNavbar">
-            <ul className="navbar-nav mx-auto">
-                <li className={"nav-item " + (props.NavbarLandingLink === true ? "active" : "")}>
-                    <a className="nav-link" href="/">Home</a>
-                </li>
-                <li className={"nav-item " + (props.NavbarCitiesLink === true ? "active" : "")}>
-                    <a className="nav-link" href="/cities">Cities</a>
-                </li>
-            </ul>
-        </div>
-    </nav>
+const mapDispatchToProps = dispatch => {
+  return {
+    fetchCities: () => dispatch(fetchCities()),
+  }
+};
 
-
-
-  )
-}
-
-
-function Landing() {
-  return (
-   <div>
-    <Navbar
-      NavbarLandingLink={true}
-    />
-    <Logo />
-    <LandingMain />
-    <Footer />
-   </div>
-  )
-}
-
-
-export default Landing;
-export {Navbar, Logo, Footer};
+export default connect(
+  mapStateToProps, 
+  mapDispatchToProps
+)(Landing);
