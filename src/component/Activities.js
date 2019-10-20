@@ -5,16 +5,39 @@ import Loader from './Loader'
 import { connect } from "react-redux";
 import { fetchActivities } from "../store/actions/activityActions";
 
+// Material-UI
+import { Grid, Typography, Card, CardMedia, CardContent } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
+
+const useStyles = makeStyles(theme => ({
+  card: {
+    maxWidth: 220,
+    margin: theme.spacing(1)
+  },
+  cardImage: {
+    width: 200,
+    height: 200
+  }
+}));
+
+
 function Activity(props) {
+  const classes = useStyles();
+
   return (
-    <div className="col-5 col-sm-5 col-md-5 col-lg-5 col-xl-5 d-flex align-items-stretch">
-      <div className="card mb-4">
-        <img className="card-img-top" src={props.activity.img} alt={"Image for " + props.activity.title + " activity"} style={{ maxHeight: 300, maxWidth: 300 }} />
-        <div className="card-img-overlay d-flex justify-content-center align-items-center">
-          <h4 className="card-title">{props.activity.title}</h4>
-        </div>
-      </div>
-    </div>
+    <Card className={classes.card}>
+      <CardMedia
+        className={classes.cardImage}
+        component="img"
+        image={props.activity.img}
+        title={"Image for " + props.activity.title + " activity"}
+      />
+      <CardContent>
+        <Typography variant="h6">
+          {props.activity.title}
+        </Typography>
+      </CardContent>
+    </Card>
   )
 }
 
@@ -35,12 +58,21 @@ class Activities extends React.Component {
     })
 
     return (
-      <div className="activitiesContainer d-flex flex-column">
-        <h3>Activities</h3>
-        <div className="allActivitiesContainer d-flex" id="activitiesContainer">
-          {this.props.isFetching ? <Loader /> : activities}
-        </div>
-      </div>
+      <Grid container direction="column">
+        <Typography variant="h5" >
+          Activities
+        </Typography>
+        <Grid item>
+          {this.props.isFetching ? <Loader /> : 
+
+            // TODO: display activities in Carousel
+
+            <Grid container justify="space-around">
+              {activities}
+            </Grid>
+          }
+        </Grid>
+      </Grid>
     )
   }
 }
@@ -51,18 +83,21 @@ function mapStateToProps(state, ownProps) {
   const {itineraryName} = ownProps;
 
   return {
-    // ? : syntax to avoid error because of undefined values since no proper initial state is defined in redux
-    activities: state.activity[itineraryName] ? state.activity[itineraryName].activities : [],
-    isFetching: state.activity[itineraryName] ? state.activity[itineraryName].isFetching : false,
+    // ? : syntax to avoid error because of undefined values
+    // since no proper initial state is defined in redux
+    activities: state.activity[itineraryName] ?
+        state.activity[itineraryName].activities : [],
+    isFetching: state.activity[itineraryName] ?
+        state.activity[itineraryName].isFetching : false,
     cityName,
     itineraryName
   }
 };
 
-
 const mapDispatchToProps = dispatch => {
   return {
-    fetchActivities: (cityName, itineraryName) => dispatch(fetchActivities(cityName, itineraryName))
+    fetchActivities: (cityName, itineraryName) =>
+        dispatch(fetchActivities(cityName, itineraryName))
   }
 };
 

@@ -26,10 +26,10 @@ function CitiesFilter(props) {
   )
 }
 
-// styles instead of makeStyles in order to use props
-const styles = (city) => ({
+// styles instead of makeStyles in order to use props (cityImage)
+const styles = (cityImage) => ({
   listItem: {
-    backgroundImage: `url(${city})`
+    backgroundImage: `url(${cityImage})`
   }
 });
 
@@ -47,7 +47,7 @@ const useStyles = makeStyles(theme => ({
     },
   },
   listItemText: {
-    backgroundColor: "white",
+    backgroundColor: theme.palette.background.paper,
     marginRight: theme.spacing(3),
     marginLeft: theme.spacing(3),
   }
@@ -119,7 +119,6 @@ function mapStateToProps(state) {
     isFetching: state.city.isFetching
   }
 };
-
 
 const mapDispatchToProps = dispatch => {
   return {

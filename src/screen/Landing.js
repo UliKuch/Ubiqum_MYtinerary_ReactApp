@@ -5,132 +5,23 @@ import Navbar from '../component/Navbar'
 import Footer from '../component/Footer'
 import Logo from '../component/Logo'
 
+// Carousel
+import Carousel from "react-multi-carousel";
+import "react-multi-carousel/lib/styles.css";
+
 // redux
 import { connect } from "react-redux";
 import { fetchCities } from "../store/actions/cityActions";
 
 // Material-UI
-import { Container, Typography } from '@material-ui/core';
+import { Container, Typography, Box, CardMedia, Card, CardContent } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-
-
-function LandingImages() {
-  const images = {
-    first: [
-      {
-        city: "Barcelona",
-        link: "./images/city-images/barcelona.jpg",
-      },
-      {
-        city: "Berlin",
-        link: "./images/city-images/berlin.jpg",
-      },
-      {
-        city: "Budapest",
-        link: "./images/city-images/budapest.jpg",
-      },
-      {
-        city: "Paris",
-        link: "./images/city-images/paris.jpg",
-      }
-    ],
-    second: [
-      {
-        city: "Vienna",
-        link: "./images/city-images/vienna.jpg",
-      },
-      {
-        city: "London",
-        link: "./images/city-images/london.jpg",
-      },
-      {
-        city: "Sarajevo",
-        link: "./images/city-images/sarajevo.jpg",
-      },
-      {
-        city: "Rome",
-        link: "./images/city-images/rome.jpg",
-      }
-    ]
-  };
-  
-  return (
-    <div className="carousel-inner">
-
-      {/* First slide */}
-      <div className="container carousel-item active">
-        <div className="row justify-content-center">
-          {images.first.map(image => {
-            return (
-              <div className="col-5 col-sm-5 col-md-5 col-lg-5 col-xl-5 d-flex align-items-stretch">
-                <div className="card mb-4">
-                  <img className="card-img-top" src={image.link} alt={"Image of " + image.city} />
-                  <div className="card-img-overlay d-flex justify-content-center align-items-center">
-                    <h4 className="card-title">{image.city}</h4>
-                  </div>
-                </div>
-              </div>
-            )
-          })}
-        </div>
-      </div>
-
-
-      {/* Second slide */}
-      <div className="carousel-item">
-      <div className="row justify-content-center">
-          {images.second.map(image => {
-            return (
-              <div className="col-5 col-sm-5 col-md-5 col-lg-5 col-xl-5 d-flex align-items-stretch">
-                <div className="card mb-4">
-                  <img className="card-img-top" src={image.link} alt={"Image of " + image.city} />
-                  <div className="card-img-overlay d-flex justify-content-center align-items-center">
-                    <h4 className="card-title">{image.city}</h4>
-                  </div>
-                </div>
-              </div>
-            )
-          })}
-        </div>
-      </div>
-      
-    </div>
-
-  )
-}
-
-
-function LandingImageBox() {
-  return (
-    <div className="container">
-
-      {/* Carousel Wrapper */}
-      <div id="multi-item-carousel" className="carousel slide carousel-multi-item" data-ride="carousel">
-
-        <LandingImages />
-        
-        <a className="carousel-control-prev" href="#multi-item-carousel" role="button" data-slide="prev">
-          <span className="carousel-control-prev-icon" aria-hidden="true"></span>
-          <span className="sr-only">Previous</span>
-        </a>
-        <a className="carousel-control-next" href="#multi-item-carousel" role="button" data-slide="next">
-          <span className="carousel-control-next-icon" aria-hidden="true"></span>
-          <span className="sr-only">Next</span>
-        </a>
-
-      </div>
-
-    </div>
-
-  )
-}
-
 
 const useStyles = makeStyles(theme => ({
   img: {
     height: "100%"
   },
-  imageContainer: {
+  arrowImageContainer: {
     height: 100,
     marginTop: theme.spacing(1),
     marginBottom: theme.spacing(3),
@@ -138,9 +29,91 @@ const useStyles = makeStyles(theme => ({
   text: {
     marginTop: theme.spacing(2),
     marginBottom: theme.spacing(1),
-
+  },
+  cityImage: {
+    height: 200,
+    width: 200
   }
 }));
+
+// for carousel
+const responsive = {
+  desktop: {
+    breakpoint: { max: 3000, min: 1024 },
+    items: 3,
+    slidesToSlide: 3, // optional, default to 1.
+  },
+  tablet: {
+    breakpoint: { max: 1024, min: 464 },
+    items: 2,
+    slidesToSlide: 2, // optional, default to 1.
+  },
+  mobile: {
+    breakpoint: { max: 464, min: 0 },
+    items: 1,
+    slidesToSlide: 1, // optional, default to 1.
+  },
+};
+
+function LandingCarouselImage(props) {
+  const classes = useStyles();
+
+  return(
+    <Box
+      display="flex"
+      justifyContent="center"
+      component={Link}
+      to={`/cities/${props.city.name}`}
+
+    >
+      <Card>
+        <CardMedia
+          image={props.city.img}
+          className={classes.cityImage}
+        />
+        <CardContent>
+            <Typography gutterBottom variant="h5" component="h2">
+              {props.city.name}
+            </Typography>
+        </CardContent>
+      </Card>
+    </Box>
+  )
+}
+
+
+function LandingCarousel(props) {
+  const images = props.cities.map(city => {
+    return (<LandingCarouselImage 
+      city={city}
+      key={city.name}
+      /> )
+  })
+
+  return (
+    <Carousel
+      arrows
+      swipeable
+      draggable
+      showDots={true}
+      renderButtonGroupOutside={true}
+      responsive={responsive}
+      ssr={true} // means to render carousel on server-side.
+      infinite={true}
+      autoPlay
+      autoPlaySpeed={2000}
+      keyBoardControl={true}
+      transitionDuration={500}
+      containerClass="carousel-container"
+      // removeArrowOnDeviceType={["tablet", "mobile"]}
+      dotListClass="custom-dot-list-style"
+      itemClass="carousel-item-padding-40-px"
+    >
+      {images}
+    </Carousel>
+  )
+}
+
 
 function LandingMain(props) {
   const classes = useStyles();
@@ -154,27 +127,29 @@ function LandingMain(props) {
         Find your perfect trip, designed by insiders who know 
             and love their cities.
       </Typography>
-      <Container 
-      component={Link}
-      to="/cities"
-      >
-        <Container
-          className={classes.imageContainer}
+      <Box
+          className={classes.arrowImageContainer}
+        >
+        <Box 
+          component={Link}
+          to="/cities"
         >
           <img
             className={classes.img}
             src="./images/circled-right-2.png"
             alt="Clickable button displaying an arrow."
           />
-        </Container>
-      </Container>
+        </Box>
+      </Box>
       <Typography
       align="center"
       className={classes.text}
       >
         Popular MYtineraries:
       </Typography>
-      <LandingImageBox />
+      <LandingCarousel
+        cities={props.citiesWithImages}
+      />
     </Container>
   )
 }
@@ -186,8 +161,13 @@ class Landing extends React.Component {
   }
 
   render() {
-    const citiesWithImages = this.props.cities.filter(city =>{
-      return city.img
+    // max. 12 cities with images
+    let imageCounter = 0;
+    const citiesWithImages = this.props.cities.filter(city => {
+      if (city.img) {
+        imageCounter++;
+      }
+      return city.img && (imageCounter < 13)
     })
 
     return (
@@ -211,7 +191,6 @@ function mapStateToProps(state) {
     isFetching: state.city.isFetching
   }
 };
-
 
 const mapDispatchToProps = dispatch => {
   return {

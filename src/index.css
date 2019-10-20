@@ -12,6 +12,11 @@ code {
     monospace;
 }
 
+/* Debugger */
+/* * {
+  border: 1px solid black;
+} */
+
 /* Sticky footer styles for Material UI Design
 -------------------------------------------------- */
 html {

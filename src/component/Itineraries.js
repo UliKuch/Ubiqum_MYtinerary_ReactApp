@@ -6,87 +6,176 @@ import Activities from './Activities'
 import { connect } from "react-redux";
 import { fetchItineraries } from "../store/actions/itineraryActions";
 
+// Material-UI
+import { ExpansionPanel, ExpansionPanelSummary, ExpansionPanelDetails, Grid, Typography, Avatar } from '@material-ui/core';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+
+const styleClassComponent = {
+  container: {
+    width: "100%"
+  },
+  // TODO: use breakpoints (for which a change to a funcional component
+  // would be necessary, I think)
+  avatar: {
+    height: 60,
+    width: 60
+  },
+  marginRight: {
+    marginRight: 8
+  },
+  itinGridContainer: {
+    overflow: "hidden",
+  },
+  textWrap: {
+    maxWidth: "100%"
+  },
+  text: {
+    display: "block"
+  },
+  activitiesWrapper: {
+    width: "100%"
+  }
+}
+
 class Itinerary extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       rendered: false,
-      extended: false
+      expanded: false
     }
   }
 
-  // if View All button is clicked for the first time,
+  componentWillUnmount() {
+    document.querySelector("#expPanel").removeEventListener("change", this.handleChange)
+  }
+
+  // if expand button is clicked for the first time,
   // the activities are rendered (and hence fetched) and stay rendered;
-  // state.extended switches with every click (in order to change button description)
-  handleClick() {
-      this.setState(() => ({
-        rendered: true,
-        extended: !this.state.extended
-      }))
+  handleChange() {
+    this.setState(() => ({
+      expanded: !this.state.expanded,
+      rendered: true
+    }))
   }
 
   render() {
     return (
-      <div className="itineraryContainer d-flex flex-column card mb-3 border">
-        <div className="card-header border-bottom-0 bg-white d-flex flex-column" id={`heading${this.props.itin._id}`}>
-          <div className="overviewContainer d-flex flex-row">
-            <div className="userContainer d-flex flex-column mr-3">
-              <div className="imageContainer">
-                <img className="rounded-circle" src={this.props.itin.profilePicture} alt={"Profile picture of " + this.props.itin.author} style={{ maxHeight: 80, width: 80 }}/>
-              </div>
-              <div className="authorNameContainer">
-                <p>{this.props.itin.author}</p>
-              </div>
-            </div>
-            <div className="itineraryDescriptionContainer d-flex flex-column">
-              <div>
-                <h3>{this.props.itin.title}</h3>
-              </div>
-              <div className="itineraryDetailsContainer d-flex flex-row justify-content-around">
-                <div>
-                  <p>{`Likes: ${this.props.itin.likes}`}</p>
-                </div>
-                <div>
-                  <p>{
-                    (this.props.itin.duration < 24) ? this.props.itin.duration + " Hours" : 
-                    (this.props.itin.duration % 24 < 8) ? (this.props.itin.duration / 24 >> 0) + " Days" :
-                    (this.props.itin.duration % 24 > 16) ? ((this.props.itin.duration / 24 >> 0) + 1) + " Days" :
-                      (this.props.itin.duration / 24 >> 0) + ".5 Days"
-                  }</p>
-                </div>
-                <div>
-                  <p>{"$".repeat(this.props.itin.price)}</p>
-                </div>
-              </div>
-              <div className="hashtagContainer d-flex flex-row">
+      <ExpansionPanel
+        id="expPanel"
+        expanded={this.state.expanded}
+        onChange={() => this.handleChange()}
+      >
+        <ExpansionPanelSummary
+          expandIcon={<ExpandMoreIcon />}
+          aria-controls="panel1bh-content"
+          id="panel1bh-header"
+        >
+
+          <Grid
+            container
+            style={styleClassComponent.itinGridContainer}
+            spacing={2}
+          >
+
+            <Grid
+              item container
+              xs={3}
+              alignItems="center"
+              direction="column"
+              className="user-container"
+              style={styleClassComponent.itinGridContainer}
+            >
+              <Avatar
+                src={this.props.itin.profilePicture}
+                alt={"Profile picture of " + this.props.itin.author}
+                style={styleClassComponent.avatar}
+              />
+              <Grid
+                item
+                style={styleClassComponent.textWrap}
+              >
+                <Typography
+                noWrap
+                variant="caption" 
+                style={styleClassComponent.text}
+                >
+                  {this.props.itin.author}
+                </Typography>
+              </Grid>
+            </Grid>
+
+            <Grid
+              item container
+              xs={9}
+              direction="column"
+              className="itinDescription">
+
+              <Grid item container>
+                <Typography variant="h5">
+                  {this.props.itin.title}
+                </Typography>
+              </Grid>
+
+              <Grid
+                item container
+                className="itinDetails"
+                justify="space-between"
+              >
+                <Grid item style={styleClassComponent.marginRight}>
+                  <Typography>{`Likes: ${this.props.itin.likes}`}</Typography>
+                </Grid>
+
+                <Grid item style={styleClassComponent.marginRight}>
+                  <Typography>
+                    {
+                      (this.props.itin.duration < 24) ? this.props.itin.duration + " Hours" : 
+                        (this.props.itin.duration % 24 < 8) ?
+                          (this.props.itin.duration / 24 >> 0) + " Days" :
+                        (this.props.itin.duration % 24 > 16) ?
+                          ((this.props.itin.duration / 24 >> 0) + 1) + " Days" :
+                        (this.props.itin.duration / 24 >> 0) + ".5 Days"
+                   }
+                  </Typography>
+                </Grid>
+
+                <Grid item>
+                  <Typography>{"$".repeat(this.props.itin.price)}</Typography>
+                </Grid>
+
+              </Grid>
+
+              <Grid item container className="hashtags" style={styleClassComponent.textWrap}>
                 {this.props.itin.hashtags.map(hashtag => {
-                  return (
-                    <p className="mr-2" key={hashtag}>{"#" + hashtag}</p>
-                  )
-                })}
-              </div>
-            </div>
-          </div>
-        </div>
-        <div id={`collapse${this.props.itin._id}`} className="collapse" aria-labelledby={`heading${this.props.itin._id}`}>
-          <div className="card-body">
-            {(!this.state.rendered) ||
+                   return (
+                     <Typography
+                      noWrap
+                      style={styleClassComponent.marginRight}
+                      key={hashtag}
+                    >
+                      {"#" + hashtag}
+                    </Typography>
+                   )
+                 })}
+              </Grid>
+
+            </Grid>
+
+          </Grid>
+
+        </ExpansionPanelSummary>
+        <ExpansionPanelDetails>
+          <div style={styleClassComponent.activitiesWrapper}>
+            {
+              (!this.state.rendered) ||
               <Activities
               cityName={this.props.itin.city}
               itineraryName={this.props.itin.title}
               />
             } 
           </div>
-        </div>
-        <div className="expandContainer card-footer border-top-0">
-          <button className="btn btn-link collapsed" type="button" data-toggle="collapse" data-target={`#collapse${this.props.itin._id}`} aria-expanded="true" aria-controls={`collapse${this.props.itin._id}`} onClick={() => this.handleClick()}>
-          {this.state.extended ?
-          "View Less" :
-          "View All"
-          }               
-          </button>
-        </div>
-      </div>
+        </ExpansionPanelDetails>
+      </ExpansionPanel>
     )
   }
 }
@@ -108,16 +197,14 @@ class Itineraries extends React.Component {
     })
 
     return (  
-      <div className="accordion allItinerariesContainer" id="itinerariesAccordion">
+      <div style={styleClassComponent.container}>
         {this.props.isFetching ? <Loader /> : itineraries}
       </div>
     )
   }
 }
 
-
 function mapStateToProps(state, ownProps) {
-  
   const {cityName} = ownProps;
 
   return {

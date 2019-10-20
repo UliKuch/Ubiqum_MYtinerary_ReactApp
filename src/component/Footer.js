@@ -24,6 +24,8 @@ function Footer() {
   // back as active if there is a previous page
   // alternatively display all or no buttons as active
 
+  // TODO: move adjustments in index.css to theme
+
   return (
     <BottomNavigation
       className={classes.stickToBottom}
