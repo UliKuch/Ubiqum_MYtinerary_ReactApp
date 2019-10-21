@@ -35,9 +35,11 @@ function Navbar(props) {
   // for drop down functionality
   const [anchorEl1, setAnchorEl1] = React.useState(null);
   const [anchorEl2, setAnchorEl2] = React.useState(null);
+
   const handleClick = (event, setAnchorEl) => {;
     setAnchorEl(event.currentTarget);
   };
+  
   const handleClose = (setAnchorEl) => {
     setAnchorEl(null);
   };
@@ -70,10 +72,18 @@ function Navbar(props) {
               open={Boolean(anchorEl1)}
               onClose={() => handleClose(setAnchorEl1)}
             >
-              <MenuItem onClick={() => handleClose(setAnchorEl1)}>
+              <MenuItem
+                component={Link}
+                to="/create-account"
+                selected={selectedMenuItem === "CreateAccount"}
+                onClick={() => handleClose(setAnchorEl1)}
+              >
                 Create Account
               </MenuItem>
-              <MenuItem onClick={() => handleClose(setAnchorEl1)}>
+              <MenuItem
+                selected={selectedMenuItem === "LogIn"}
+                onClick={() => handleClose(setAnchorEl1)}
+              >
                 Log In
               </MenuItem>
             </DropDownMenu>
