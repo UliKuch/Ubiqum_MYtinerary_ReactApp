@@ -81,10 +81,12 @@ function Navbar(props) {
                 Create Account
               </MenuItem>
               <MenuItem
-                selected={selectedMenuItem === "LogIn"}
+                component={Link}
+                to="/user/login"
+                selected={selectedMenuItem === "Login"}
                 onClick={() => handleClose(setAnchorEl1)}
               >
-                Log In
+                Login
               </MenuItem>
             </DropDownMenu>
             <IconButton

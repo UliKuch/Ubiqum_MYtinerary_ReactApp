@@ -4,7 +4,8 @@ import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import Landing from './screen/Landing.js';
 import Cities from './screen/Cities.js';
 import City from './screen/City.js';
-import CreateAccount from './screen/CreateAccount'
+import CreateAccount from './screen/CreateAccount';
+import Login from './screen/Login';
 
 export default class App extends React.Component {
   render() {
@@ -16,6 +17,7 @@ export default class App extends React.Component {
             <Route exact path='/cities' component={Cities} />
             <Route path='/cities/:city' component={City} />
             <Route path='/user/create-account' component={CreateAccount} />
+            <Route path='/user/login' component={Login} />
           </Switch>
         </div>
       </BrowserRouter>  
