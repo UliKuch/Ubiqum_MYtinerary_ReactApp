@@ -74,7 +74,7 @@ function Navbar(props) {
             >
               <MenuItem
                 component={Link}
-                to="/create-account"
+                to="/user/create-account"
                 selected={selectedMenuItem === "CreateAccount"}
                 onClick={() => handleClose(setAnchorEl1)}
               >

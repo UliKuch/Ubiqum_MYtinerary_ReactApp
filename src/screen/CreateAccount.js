@@ -5,8 +5,8 @@ import Navbar from '../component/Navbar'
 import Footer from '../component/Footer'
 
 // redux
-// import { connect } from "react-redux";
-import {  } from "../store/actions/cityActions";
+import { connect } from "react-redux";
+import { postUser } from "../store/actions/userActions";
 
 // Material-UI
 import {
@@ -31,6 +31,7 @@ import {
   AccountCircle
 } from '@material-ui/icons';
 
+// for countries drop down
 const countries = [
   {
     value: "France",
@@ -93,20 +94,24 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-function CreateAccountForm() {
+function CreateAccountForm(props) {
   const classes = useStyles();
 
   const [values, setValues] = React.useState({
     country: "",
     showPassword: false,
-    checked: false
+    checked: false,
+
+    // set initial values to avoid uncontrolled components
+    userImage: "",
+    firstName: "",
+    lastName: "",
+    username: "",
+    password: "",
+    email: ""
   });
   
   const handleChangeTextField = name => event => {
-    setValues({ ...values, [name]: event.target.value });
-  };
-
-  const handleChangeCountry = name => event => {
     setValues({ ...values, [name]: event.target.value });
   };
 
@@ -122,15 +127,12 @@ function CreateAccountForm() {
     event.preventDefault();
   };
 
-  const handleSubmit = event => {
-    console.log(values);
-    event.preventDefault();
-  }
+  // TODO: add client side validation (pw length, email etc.)
 
   return (
     <form
       className={classes.formContainer}
-      onSubmit={handleSubmit}
+      onSubmit={(event) => props.handleSubmit(event, values)}
     >
       <Avatar className={classes.avatar}>
         <AccountCircle style={{ fontSize: 300 }}/>
@@ -220,8 +222,7 @@ function CreateAccountForm() {
         placeholder="Choose Country"
         className={classes.textField}
         value={values.country}
-        onChange={handleChangeCountry("country")}
-
+        onChange={handleChangeTextField("country")}
       >
         {countries.map(option => (
           <MenuItem
@@ -262,6 +263,13 @@ function CreateAccountForm() {
 
 
 class CreateAccount extends React.Component {
+  handleSubmit(event, user) {
+    // prevents page reload
+    event.preventDefault();
+
+    console.log(user);
+    this.props.postUser(user);
+  }
 
   render() {
 
@@ -272,7 +280,9 @@ class CreateAccount extends React.Component {
         />
         <Grid container direction="column">
           <Typography variant="h4">Create Account</Typography>
-          <CreateAccountForm />
+          <CreateAccountForm
+            handleSubmit={(event, user) => this.handleSubmit(event, user)}
+          />
         </Grid>
         <Footer />
       </div>
@@ -280,4 +290,20 @@ class CreateAccount extends React.Component {
   }
 }
 
-export default CreateAccount
+function mapStateToProps(state) {
+
+  return {
+    isPosting: state.user.isPosting,
+  }
+};
+
+const mapDispatchToProps = dispatch => {
+  return {
+    postUser: (user) => dispatch(postUser(user)),
+  }
+};
+
+export default connect(
+  mapStateToProps, 
+  mapDispatchToProps
+)(CreateAccount);
