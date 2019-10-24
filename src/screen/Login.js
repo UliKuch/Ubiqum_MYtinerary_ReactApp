@@ -1,7 +1,8 @@
 import React from 'react';
 
-import Navbar from '../component/Navbar'
-import Footer from '../component/Footer'
+import Navbar from '../component/Navbar';
+import Footer from '../component/Footer';
+import GoogleLogin from '../component/GoogleLogin';
 
 // redux
 // import { connect } from "react-redux";
@@ -37,7 +38,9 @@ const useStyles = makeStyles(theme => ({
   },
   submitButton: {
     margin: theme.spacing(1),
-    alignSelf: "center"
+    alignSelf: "center",
+    width: "100%",
+    maxWidth: 300
   }
 }));
 
@@ -48,7 +51,7 @@ function LoginForm(props) {
     showPassword: false,
 
     // set initial values to avoid uncontrolled components
-    username: "",
+    email: "",
     password: "",
   });
 
@@ -71,12 +74,12 @@ function LoginForm(props) {
     >
       <TextField
         required
-        id="Username"
-        label="Username"
-        placeholder="Enter Username"
+        id="Email"
+        label="Email"
+        placeholder="Enter Email Address"
         className={classes.textField}
-        value={values.username}
-        onChange={handleChangeTextField("username")}
+        value={values.email}
+        onChange={handleChangeTextField("email")}
       />
 
       <FormControl
@@ -134,10 +137,16 @@ class Login extends React.Component {
           selectedMenuItem="Login"
         />
         <Grid container direction="column">
-          <Typography variant="h4">Login</Typography>
-          <LoginForm
-            handleSubmit={(event, user) => this.handleSubmit(event, user)}
-          />
+          <Grid item container direction="column">
+            <Typography variant="h4">Login</Typography>
+            <LoginForm
+              handleSubmit={(event, user) => this.handleSubmit(event, user)}
+            />
+          </Grid>
+          <Typography>
+          or
+          </Typography>
+          <GoogleLogin />
         </Grid>
         <Footer />
       </div>

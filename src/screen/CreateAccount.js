@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 
 import Navbar from '../component/Navbar'
 import Footer from '../component/Footer'
+import GoogleLogin from '../component/GoogleLogin';
 
 // redux
 import { connect } from "react-redux";
@@ -90,7 +91,9 @@ const useStyles = makeStyles(theme => ({
   },
   submitButton: {
     margin: theme.spacing(1),
-    alignSelf: "center"
+    alignSelf: "center",
+    width: "100%",
+    maxWidth: 300
   }
 }));
 
@@ -279,10 +282,14 @@ class CreateAccount extends React.Component {
           selectedMenuItem="CreateAccount"
         />
         <Grid container direction="column">
-          <Typography variant="h4">Create Account</Typography>
-          <CreateAccountForm
-            handleSubmit={(event, user) => this.handleSubmit(event, user)}
-          />
+          <Grid item container direction="column">
+            <Typography variant="h4">Create Account</Typography>
+            <CreateAccountForm
+              handleSubmit={(event, user) => this.handleSubmit(event, user)}
+            />
+          </Grid>
+          <Typography>or</Typography>
+          <GoogleLogin />
         </Grid>
         <Footer />
       </div>
