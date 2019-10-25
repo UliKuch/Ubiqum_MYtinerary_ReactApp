@@ -9,6 +9,7 @@
     "enzyme": "^3.10.0",
     "enzyme-adapter-react-16": "^1.14.0",
     "eslint": "^6.5.1",
+    "jwt-decode": "^2.2.0",
     "react": "^16.10.1",
     "react-dom": "^16.10.1",
     "react-multi-carousel": "^2.3.0",

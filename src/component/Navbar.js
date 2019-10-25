@@ -10,6 +10,8 @@ import MenuItem from '@material-ui/core/MenuItem';
 import MenuIcon from '@material-ui/icons/Menu';
 import Box from '@material-ui/core/Box';
 
+const jwtDecode = require('jwt-decode');
+
 const DropDownMenu = withStyles({
   paper: {
     border: '1px solid #d3d4d5',
@@ -35,6 +37,30 @@ function Navbar(props) {
   // for drop down functionality
   const [anchorEl1, setAnchorEl1] = React.useState(null);
   const [anchorEl2, setAnchorEl2] = React.useState(null);
+
+
+  const [userImage, setUserImage] = React.useState(null);
+  const [userEmail, setUserEmail] = React.useState(null);
+
+  let token = "";
+  let tokenPlain = {};
+
+  // if token exists, get token from local storage
+  if (window.localStorage.getItem("userToken")) {
+    token = window.localStorage.getItem("userToken");
+    tokenPlain = jwtDecode(token);
+  }
+
+  // get userImage and email from token and store it in state
+  React.useEffect(() => {
+    setUserImage(tokenPlain.userImage);
+    setUserEmail(tokenPlain.email);
+
+    console.log(userImage);
+    console.log(userEmail);
+  }, [tokenPlain.userImage, tokenPlain.email, userImage, userEmail])
+
+  // TODO: Is there a better way to handle missing tokens (w/o undefined)?
 
   const handleClick = (event, setAnchorEl) => {;
     setAnchorEl(event.currentTarget);
