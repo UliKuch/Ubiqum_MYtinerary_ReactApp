@@ -4,7 +4,10 @@ import {
   POST_USER_SUCCESS,
   LOGIN_USER_REQUEST,
   LOGIN_USER_FAILURE,
-  LOGIN_USER_SUCCESS
+  LOGIN_USER_SUCCESS,
+  LOGOUT_USER_REQUEST,
+  LOGOUT_USER_FAILURE,
+  LOGOUT_USER_SUCCESS
 } from "../actions/userActions";
 
 const postInitialState = {
@@ -50,6 +53,18 @@ function userReducer(state = userInitialState, action) {
     case LOGIN_USER_SUCCESS:
       return Object.assign({}, state, {
         isLoggingIn: false
+      })
+    case LOGOUT_USER_REQUEST:
+      return Object.assign({}, state, {
+        isLoggingOut: true
+      })
+    case LOGOUT_USER_FAILURE:
+      return Object.assign({}, state, {
+        isLoggingOut: false
+      })
+    case LOGOUT_USER_SUCCESS:
+      return Object.assign({}, state, {
+        isLoggingOut: false
       })
     default:
       return state

@@ -266,12 +266,16 @@ function CreateAccountForm(props) {
 
 
 class CreateAccount extends React.Component {
-  handleSubmit(event, user) {
+  async handleSubmit(event, user) {
     // prevents page reload
     event.preventDefault();
 
     console.log(user);
-    this.props.postUser(user);
+    // add user to db and, if successful, log user in
+    await this.props.postUser(user)
+
+    // route to landing page after creating & login
+    this.props.history.push("/")
   }
 
   render() {

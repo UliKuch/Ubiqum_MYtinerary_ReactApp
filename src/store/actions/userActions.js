@@ -17,10 +17,9 @@ export const LOGOUT_USER_SUCCESS = "LOGOUT_USER_SUCCESS";
 // ----- action creators ------
 
 // POST user
-export function postUserRequest(user) {
+export function postUserRequest() {
   return {
     type: POST_USER_REQUEST,
-    user
   }
 }
 export function postUserFailure() {
@@ -35,10 +34,9 @@ export function postUserSuccess() {
 }
 
 // Login user
-export function loginUserRequest(user) {
+export function loginUserRequest() {
   return {
     type: LOGIN_USER_REQUEST,
-    user
   }
 }
 export function loginUserFailure() {
@@ -53,10 +51,9 @@ export function loginUserSuccess() {
 }
 
 // Logout user
-export function logoutUserRequest(user) {
+export function logoutUserRequest() {
   return {
     type: LOGOUT_USER_REQUEST,
-    user
   }
 }
 export function logoutUserFailure() {
@@ -77,10 +74,22 @@ export function logoutUserSuccess() {
 export function postUser(user) {
 
   return async function(dispatch) {
-    dispatch(postUserRequest(user))
+    dispatch(postUserRequest())
     try {
-      const response = await axios.post("http://localhost:5000/user/", user);
+      const response = await axios.post(
+        "http://localhost:5000/user/", user
+      );
       console.log(response);
+
+      // Logging new user in
+      if (response) {
+        const loginData = {
+          email: user.email,
+          password: user.password
+        }
+        await dispatch(loginUser(loginData));
+      }
+
       return dispatch(postUserSuccess())
     } catch (error) {
       console.log(error);
@@ -93,14 +102,17 @@ export function postUser(user) {
 export function loginUser(user) {
 
   return async function(dispatch) {
-    dispatch(loginUserRequest(user))
+    dispatch(loginUserRequest())
     try {
-      const response = await axios.post("http://localhost:5000/user/login/", user);
+      const response = await axios.post(
+        "http://localhost:5000/user/login/", user
+      );
 
       console.log(response.data.token);
-      // do sth with response.data.token
+      window.localStorage.setItem("userToken", response.data.token);
 
       return dispatch(loginUserSuccess())
+      
     } catch (error) {
       console.log(error);
       return dispatch(loginUserFailure())
@@ -109,14 +121,21 @@ export function loginUser(user) {
 } 
 
 // Logout user
-export function logoutUser(user) {
+export function logoutUser(token) {
 
   return async function(dispatch) {
-    dispatch(logoutUserRequest(user))
+    dispatch(logoutUserRequest())
     try {
-      const response = await axios.post("http://localhost:5000/user/logout/", user);
-      console.log(response);
+      // // no server-side logout implemented yet
+      // const response = await axios.post(
+      //   "http://localhost:5000/user/logout/", token
+      // );
+      // console.log(response);
+
+      window.localStorage.removeItem("token");
+      console.log("Token " + token + " successfully removed.")
       return dispatch(logoutUserSuccess())
+
     } catch (error) {
       console.log(error);
       return dispatch(logoutUserFailure())

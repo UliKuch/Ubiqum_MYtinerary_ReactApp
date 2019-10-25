@@ -158,6 +158,11 @@ function LandingMain(props) {
 class Landing extends React.Component {
   componentDidMount() {
     this.props.fetchCities();
+
+    // if token in url (google login), save token in local storage
+    if (this.props.match.params.token) {
+      window.localStorage.setItem("userToken", this.props.match.params.token);
+    };
   }
 
   render() {

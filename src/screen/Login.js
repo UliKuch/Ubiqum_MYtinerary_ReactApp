@@ -124,11 +124,14 @@ function LoginForm(props) {
 }
 
 class Login extends React.Component {
-  handleSubmit(event, user) {
+  async handleSubmit(event, user) {
     // prevents page reload
     event.preventDefault();
 
-    this.props.loginUser(user);
+    await this.props.loginUser(user);
+
+    // route to landing page after login
+    this.props.history.push("/")
   }
 
   render() {
