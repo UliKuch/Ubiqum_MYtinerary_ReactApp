@@ -14,6 +14,7 @@ export default class App extends React.Component {
         <div className="App">
           <Switch>
             <Route exact path='/' component={Landing} />
+            <Route path='/logged_in/:token' component={Landing} />
             <Route exact path='/cities' component={Cities} />
             <Route path='/cities/:city' component={City} />
             <Route path='/user/create-account' component={CreateAccount} />
