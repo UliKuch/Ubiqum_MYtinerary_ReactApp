@@ -5,7 +5,8 @@ import Footer from '../component/Footer';
 import GoogleLogin from '../component/GoogleLogin';
 
 // redux
-// import { connect } from "react-redux";
+import { connect } from "react-redux";
+import { loginUser } from "../store/actions/userActions";
 
 // Material-UI
 import {
@@ -127,7 +128,7 @@ class Login extends React.Component {
     // prevents page reload
     event.preventDefault();
 
-    console.log(user);
+    this.props.loginUser(user);
   }
 
   render() {
@@ -155,4 +156,20 @@ class Login extends React.Component {
 
 }
 
-export default Login
+function mapStateToProps(state) {
+
+  return {
+    isLoggingIn: state.user.isLoggingIn,
+  }
+};
+
+const mapDispatchToProps = dispatch => {
+  return {
+    loginUser: (user) => dispatch(loginUser(user)),
+  }
+};
+
+export default connect(
+  mapStateToProps, 
+  mapDispatchToProps
+)(Login);

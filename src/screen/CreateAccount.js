@@ -300,7 +300,7 @@ class CreateAccount extends React.Component {
 function mapStateToProps(state) {
 
   return {
-    isPosting: state.user.isPosting,
+    isPosting: state.postUser.isPosting,
   }
 };
 

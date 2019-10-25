@@ -1,14 +1,18 @@
 import {
   POST_USER_REQUEST,
   POST_USER_FAILURE, 
-  POST_USER_SUCCESS
+  POST_USER_SUCCESS,
+  LOGIN_USER_REQUEST,
+  LOGIN_USER_FAILURE,
+  LOGIN_USER_SUCCESS
 } from "../actions/userActions";
 
-const initialState = {
+const postInitialState = {
   isPosting: false
 }
 
-function userReducer(state = initialState, action) {
+// POST user
+function postUserReducer(state = postInitialState, action) {
   switch (action.type) {
     case POST_USER_REQUEST:
       return Object.assign({}, state, {
@@ -27,4 +31,29 @@ function userReducer(state = initialState, action) {
   }
 }
 
-export default userReducer
+const userInitialState = {
+  isLoggingIn: false,
+  isLoggingOut: false
+}
+
+// Login/Logout User
+function userReducer(state = userInitialState, action) {
+  switch (action.type) {
+    case LOGIN_USER_REQUEST:
+      return Object.assign({}, state, {
+        isLoggingIn: true
+      })
+    case LOGIN_USER_FAILURE:
+      return Object.assign({}, state, {
+        isLoggingIn: false
+      })
+    case LOGIN_USER_SUCCESS:
+      return Object.assign({}, state, {
+        isLoggingIn: false
+      })
+    default:
+      return state
+  }
+}
+
+export {userReducer, postUserReducer}
