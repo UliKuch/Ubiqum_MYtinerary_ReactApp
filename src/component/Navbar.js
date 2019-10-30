@@ -11,7 +11,9 @@ import MenuIcon from '@material-ui/icons/Menu';
 import Box from '@material-ui/core/Box';
 import Avatar from '@material-ui/core/Avatar';
 
-const jwtDecode = require('jwt-decode');
+// redux
+import { connect } from "react-redux";
+import { logoutUser } from "../store/actions/userActions";
 
 const DropDownMenu = withStyles({
   paper: {
@@ -39,27 +41,6 @@ function Navbar(props) {
   const [anchorEl1, setAnchorEl1] = React.useState(null);
   const [anchorEl2, setAnchorEl2] = React.useState(null);
 
-
-  const [userImage, setUserImage] = React.useState(null);
-  const [userEmail, setUserEmail] = React.useState(null);
-
-  let token = "";
-  let tokenPlain = {};
-
-  // if token exists, get token from local storage
-  if (window.localStorage.getItem("userToken")) {
-    token = window.localStorage.getItem("userToken");
-    tokenPlain = jwtDecode(token);
-  }
-
-  // get userImage and email from token and store it in state
-  React.useEffect(() => {
-    setUserImage(tokenPlain.userImage);
-    setUserEmail(tokenPlain.email);
-  }, [tokenPlain.userImage, tokenPlain.email, userImage, userEmail])
-
-  // TODO: Is there a better way to handle missing tokens (w/o undefined)?
-
   const handleClick = (event, setAnchorEl) => {;
     setAnchorEl(event.currentTarget);
   };
@@ -68,9 +49,14 @@ function Navbar(props) {
     setAnchorEl(null);
   };
 
-  // uses props to set which element in drop down navigation is
+  const handleLogout = () => {
+    props.logoutUser(props.userEmail)
+  }
+
+  // use props to set which element in drop down navigation is
   // displayed as selected
   const selectedMenuItem = props.selectedMenuItem;
+
   return (
     <div>
       <AppBar position="static">
@@ -87,8 +73,8 @@ function Navbar(props) {
               onClick={(event) => {handleClick(event, setAnchorEl1)}}
             >
               {
-                userImage
-                ? <Avatar src={userImage} />
+                props.userImage
+                ? <Avatar src={props.userImage} />
                 : <AccountCircle fontSize="large" />
               }
             </IconButton>
@@ -100,7 +86,7 @@ function Navbar(props) {
               onClose={() => handleClose(setAnchorEl1)}
             >
               {
-                !userEmail
+                !props.userEmail
                 ? 
                 <div>
                   <MenuItem
@@ -122,14 +108,10 @@ function Navbar(props) {
                 </div>
                 :
                 <MenuItem
-                  component={Link}
-                  to="/user/login"
-
-
-                  // TODO: create Logout
-
-
-                  onClick={() => handleClose(setAnchorEl1)}
+                  onClick={() => {
+                    handleLogout(props.userEmail);
+                    handleClose(setAnchorEl1);
+                  }}
                 >
                   Logout
                 </MenuItem>
@@ -172,4 +154,21 @@ function Navbar(props) {
   )
 }
 
-export default Navbar;
+function mapStateToProps(state) {
+  return {
+    userEmail: state.user.userEmail,
+    userImage: state.user.userImage,
+    userId: state.user.userId
+  }
+};
+
+const mapDispatchToProps = dispatch => {
+  return {
+    logoutUser: email => dispatch(logoutUser(email))
+  }
+};
+
+export default connect(
+  mapStateToProps, 
+  mapDispatchToProps
+)(Navbar);

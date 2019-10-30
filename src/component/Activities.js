@@ -44,6 +44,8 @@ function Activity(props) {
 
 class Activities extends React.Component {
   componentDidMount() {
+    // TODO: only fetch activities if they are not already in store
+      // (e.g. because the page was visited earlier in the same session)
     this.props.fetchActivities(this.props.cityName, this.props.itineraryName)
   }
 

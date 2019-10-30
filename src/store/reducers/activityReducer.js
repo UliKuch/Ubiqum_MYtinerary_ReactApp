@@ -4,11 +4,6 @@ import {
   FETCH_ACTIVITIES_SUCCESS
 } from "../actions/activityActions"
 
-// const initialState = {
-//   activities: [],
-//   isFetching: false
-// }
-
 export function activityReducer(state = {}, action) {
   switch (action.type) {
     case FETCH_ACTIVITIES_REQUEST:
