@@ -13,6 +13,7 @@ export const LOGOUT_USER_REQUEST = "LOGOUT_USER_REQUEST";
 export const LOGOUT_USER_FAILURE = "LOGOUT_USER_FAILURE";
 export const LOGOUT_USER_SUCCESS = "LOGOUT_USER_SUCCESS";
 
+export const STORE_USER_INFO = "STORE_USER_INFO";
 
 // ----- action creators ------
 
@@ -64,6 +65,13 @@ export function logoutUserFailure() {
 export function logoutUserSuccess() {
   return {
     type: LOGOUT_USER_SUCCESS,
+  }
+}
+
+export function storeUserInfo(userInfo) {
+  return {
+    type: STORE_USER_INFO,
+    userInfo: userInfo
   }
 }
 
@@ -121,19 +129,19 @@ export function loginUser(user) {
 } 
 
 // Logout user
-export function logoutUser(token) {
+export function logoutUser(email) {
 
   return async function(dispatch) {
     dispatch(logoutUserRequest())
     try {
       // // no server-side logout implemented yet
       // const response = await axios.post(
-      //   "http://localhost:5000/user/logout/", token
+      //   "http://localhost:5000/user/logout/", email
       // );
       // console.log(response);
 
       window.localStorage.removeItem("token");
-      console.log("Token " + token + " successfully removed.")
+      console.log("Token successfully removed.")
       return dispatch(logoutUserSuccess())
 
     } catch (error) {

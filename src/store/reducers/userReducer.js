@@ -7,7 +7,8 @@ import {
   LOGIN_USER_SUCCESS,
   LOGOUT_USER_REQUEST,
   LOGOUT_USER_FAILURE,
-  LOGOUT_USER_SUCCESS
+  LOGOUT_USER_SUCCESS,
+  STORE_USER_INFO
 } from "../actions/userActions";
 
 const postInitialState = {
@@ -36,12 +37,23 @@ function postUserReducer(state = postInitialState, action) {
 
 const userInitialState = {
   isLoggingIn: false,
-  isLoggingOut: false
+  isLoggingOut: false,
+  isLoggedIn: false,
+  userEmail: "",
+  userImage: "",
+  userId: ""
 }
 
 // Login/Logout User
 function userReducer(state = userInitialState, action) {
   switch (action.type) {
+    case STORE_USER_INFO:
+      return Object.assign({}, state, {
+        userEmail: action.userInfo.userEmail,
+        userImage: action.userInfo.userImage,
+        userId: action.userInfo.userId,
+        isLoggedIn: true
+      })
     case LOGIN_USER_REQUEST:
       return Object.assign({}, state, {
         isLoggingIn: true
@@ -52,7 +64,8 @@ function userReducer(state = userInitialState, action) {
       })
     case LOGIN_USER_SUCCESS:
       return Object.assign({}, state, {
-        isLoggingIn: false
+        isLoggingIn: false,
+        isLoggedIn: true
       })
     case LOGOUT_USER_REQUEST:
       return Object.assign({}, state, {
@@ -64,7 +77,11 @@ function userReducer(state = userInitialState, action) {
       })
     case LOGOUT_USER_SUCCESS:
       return Object.assign({}, state, {
-        isLoggingOut: false
+        isLoggingOut: false,
+        isLoggedIn: false,
+        userEmail: "",
+        userImage: "",
+        userId: ""
       })
     default:
       return state
