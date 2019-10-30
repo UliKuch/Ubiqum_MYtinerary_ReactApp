@@ -50,7 +50,7 @@ function Navbar(props) {
   };
 
   const handleLogout = () => {
-    props.logoutUser(props.userEmail)
+    props.logoutUser(window.localStorage.getItem("userToken"))
   }
 
   // use props to set which element in drop down navigation is
@@ -164,7 +164,7 @@ function mapStateToProps(state) {
 
 const mapDispatchToProps = dispatch => {
   return {
-    logoutUser: email => dispatch(logoutUser(email))
+    logoutUser: token => dispatch(logoutUser(token))
   }
 };
 

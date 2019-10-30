@@ -68,6 +68,7 @@ export function logoutUserSuccess() {
   }
 }
 
+// Store user info in store
 export function storeUserInfo(userInfo) {
   return {
     type: STORE_USER_INFO,
@@ -129,18 +130,20 @@ export function loginUser(user) {
 } 
 
 // Logout user
-export function logoutUser(email) {
+export function logoutUser(token) {
 
   return async function(dispatch) {
     dispatch(logoutUserRequest())
     try {
-      // // no server-side logout implemented yet
-      // const response = await axios.post(
-      //   "http://localhost:5000/user/logout/", email
-      // );
-      // console.log(response);
+      console.log("Logging out...");
+      const response = await axios.post(
+        "http://localhost:5000/user/logout/", null, {
+          headers: { Authorization: "Bearer " + token }
+        }
+      );
+      console.log(response);
 
-      window.localStorage.removeItem("token");
+      window.localStorage.removeItem("userToken");
       console.log("Token successfully removed.")
       return dispatch(logoutUserSuccess())
 
