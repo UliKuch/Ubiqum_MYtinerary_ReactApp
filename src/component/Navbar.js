@@ -74,7 +74,12 @@ function Navbar(props) {
             >
               {
                 props.userImage
-                ? <Avatar src={props.userImage} />
+                ? <Avatar
+                  src={props.userImage}
+                  // display substitute image if userImage path from db does not work
+                  // (there does not seem to be a way to display material-ui icon instead)
+                  imgProps={{ onError: (e) => { e.target.src = "/images/userIcon.png" } }}
+                />
                 : <AccountCircle fontSize="large" />
               }
             </IconButton>

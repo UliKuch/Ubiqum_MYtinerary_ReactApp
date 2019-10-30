@@ -266,6 +266,13 @@ function CreateAccountForm(props) {
 
 
 class CreateAccount extends React.Component {
+  componentDidMount() {
+    // route to landing page if a user is logged in (i.e. if token exists)
+    if (window.localStorage.getItem("userToken")) {
+      this.props.history.push("/")
+    }
+  }
+
   async handleSubmit(event, user) {
     // prevents page reload
     event.preventDefault();
