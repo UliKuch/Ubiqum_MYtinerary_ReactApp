@@ -159,6 +159,9 @@ class Landing extends React.Component {
   componentDidMount() {
     this.props.fetchCities();
 
+    //TODO: PROBLEM: logs you in if you access landing page with
+    // url including token (e.g. if you load page from the urls saved in your browser)
+
     // if token in url (google login), save token in local storage
     if (this.props.match.params.token) {
       window.localStorage.setItem("userToken", this.props.match.params.token);

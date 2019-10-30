@@ -9,6 +9,7 @@ import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import MenuIcon from '@material-ui/icons/Menu';
 import Box from '@material-ui/core/Box';
+import Avatar from '@material-ui/core/Avatar';
 
 const jwtDecode = require('jwt-decode');
 
@@ -55,9 +56,6 @@ function Navbar(props) {
   React.useEffect(() => {
     setUserImage(tokenPlain.userImage);
     setUserEmail(tokenPlain.email);
-
-    console.log(userImage);
-    console.log(userEmail);
   }, [tokenPlain.userImage, tokenPlain.email, userImage, userEmail])
 
   // TODO: Is there a better way to handle missing tokens (w/o undefined)?
@@ -73,7 +71,6 @@ function Navbar(props) {
   // uses props to set which element in drop down navigation is
   // displayed as selected
   const selectedMenuItem = props.selectedMenuItem;
-
   return (
     <div>
       <AppBar position="static">
@@ -89,7 +86,11 @@ function Navbar(props) {
               aria-haspopup="true"
               onClick={(event) => {handleClick(event, setAnchorEl1)}}
             >
-              <AccountCircle />
+              {
+                userImage
+                ? <Avatar src={userImage} />
+                : <AccountCircle fontSize="large" />
+              }
             </IconButton>
             <DropDownMenu
               id="account-menu"
@@ -98,22 +99,41 @@ function Navbar(props) {
               open={Boolean(anchorEl1)}
               onClose={() => handleClose(setAnchorEl1)}
             >
-              <MenuItem
-                component={Link}
-                to="/user/create-account"
-                selected={selectedMenuItem === "CreateAccount"}
-                onClick={() => handleClose(setAnchorEl1)}
-              >
-                Create Account
-              </MenuItem>
-              <MenuItem
-                component={Link}
-                to="/user/login"
-                selected={selectedMenuItem === "Login"}
-                onClick={() => handleClose(setAnchorEl1)}
-              >
-                Login
-              </MenuItem>
+              {
+                !userEmail
+                ? 
+                <div>
+                  <MenuItem
+                    component={Link}
+                    to="/user/create-account"
+                    selected={selectedMenuItem === "CreateAccount"}
+                    onClick={() => handleClose(setAnchorEl1)}
+                  >
+                    Create Account
+                  </MenuItem>
+                  <MenuItem
+                    component={Link}
+                    to="/user/login"
+                    selected={selectedMenuItem === "Login"}
+                    onClick={() => handleClose(setAnchorEl1)}
+                  >
+                    Login
+                  </MenuItem>
+                </div>
+                :
+                <MenuItem
+                  component={Link}
+                  to="/user/login"
+
+
+                  // TODO: create Logout
+
+
+                  onClick={() => handleClose(setAnchorEl1)}
+                >
+                  Logout
+                </MenuItem>
+              }
             </DropDownMenu>
             <IconButton
               aria-label="menu"
