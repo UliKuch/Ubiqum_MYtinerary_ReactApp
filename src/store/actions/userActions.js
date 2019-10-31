@@ -15,6 +15,15 @@ export const LOGOUT_USER_SUCCESS = "LOGOUT_USER_SUCCESS";
 
 export const STORE_USER_INFO = "STORE_USER_INFO";
 
+export const GET_FAVITIN_REQUEST = "GET_FAVITIN_REQUEST";
+export const GET_FAVITIN_FAILURE = "GET_FAVITIN_FAILURE";
+export const GET_FAVITIN_SUCCESS = "GET_FAVITIN_SUCCESS";
+
+export const POST_FAVITIN_REQUEST = "POST_FAVITIN_REQUEST";
+export const POST_FAVITIN_FAILURE = "POST_FAVITIN_FAILURE";
+export const POST_FAVITIN_SUCCESS = "POST_FAVITIN_SUCCESS";
+
+
 // ----- action creators ------
 
 // POST user
@@ -76,6 +85,40 @@ export function storeUserInfo(userInfo) {
   }
 }
 
+// GET favorite itineraries
+export function getFavitinRequest() {
+  return {
+    type: GET_FAVITIN_REQUEST,
+  }
+}
+export function getFavitinFailure() {
+  return {
+    type: GET_FAVITIN_FAILURE,
+  }
+}
+export function getFavitinSuccess(favItin) {
+  return {
+    type: GET_FAVITIN_SUCCESS,
+    favItin
+  }
+}
+
+// POST favorite itineraries
+export function postFavitinRequest() {
+  return {
+    type: POST_FAVITIN_REQUEST,
+  }
+}
+export function postFavitinFailure() {
+  return {
+    type: POST_FAVITIN_FAILURE,
+  }
+}
+export function postFavitinSuccess() {
+  return {
+    type: POST_FAVITIN_SUCCESS,
+  }
+}
 
 // ----- thunk action creators -----
 
@@ -88,7 +131,6 @@ export function postUser(user) {
       const response = await axios.post(
         "http://localhost:5000/user/", user
       );
-      console.log(response);
 
       // Logging new user in
       if (response) {
@@ -117,7 +159,6 @@ export function loginUser(user) {
         "http://localhost:5000/user/login/", user
       );
 
-      console.log(response.data.token);
       window.localStorage.setItem("userToken", response.data.token);
 
       return dispatch(loginUserSuccess())
@@ -135,13 +176,11 @@ export function logoutUser(token) {
   return async function(dispatch) {
     dispatch(logoutUserRequest())
     try {
-      console.log("Logging out...");
-      const response = await axios.post(
+      await axios.post(
         "http://localhost:5000/user/logout/", null, {
           headers: { Authorization: "Bearer " + token }
         }
       );
-      console.log(response);
 
       window.localStorage.removeItem("userToken");
       console.log("Token successfully removed.")
@@ -150,6 +189,52 @@ export function logoutUser(token) {
     } catch (error) {
       console.log(error);
       return dispatch(logoutUserFailure())
+    }
+  }
+} 
+
+// GET favorite itineraries
+export function getFavitin(token) {
+
+  return async function(dispatch) {
+    dispatch(getFavitinRequest())
+    try {
+      const response = await axios.get(
+        "http://localhost:5000/user/favoriteItineraries", {
+          headers: {
+            "Authorization": "Bearer " + token,
+          }
+        }
+      );
+
+      return dispatch(getFavitinSuccess(response.data))
+    } catch (error) {
+      console.log(error);
+      return dispatch(getFavitinFailure())
+    }
+  }
+} 
+
+// POST favorite itineraries
+export function postFavitin(itin, token) {
+
+  return async function(dispatch) {
+    dispatch(postFavitinRequest())
+    try {
+      const body = {itineraryTitle: itin};
+      const response = await axios.post(
+        "http://localhost:5000/user/favoriteItineraries", body, {
+          headers: { Authorization: "Bearer " + token }
+        }
+      );
+
+      // GET favorite itineraries to update itineraries in store
+      dispatch(getFavitin(token))
+
+      return dispatch(postFavitinSuccess(response))
+    } catch (error) {
+      console.log(error);
+      return dispatch(postFavitinFailure())
     }
   }
 } 

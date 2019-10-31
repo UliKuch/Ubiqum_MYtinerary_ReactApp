@@ -5,10 +5,13 @@ import Activities from './Activities'
 // redux
 import { connect } from "react-redux";
 import { fetchItineraries } from "../store/actions/itineraryActions";
+import { getFavitin, postFavitin } from "../store/actions/userActions";
 
 // Material-UI
 import { ExpansionPanel, ExpansionPanelSummary, ExpansionPanelDetails, Grid, Typography, Avatar } from '@material-ui/core';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import StarBorderIcon from '@material-ui/icons/StarBorder';
+import StarIcon from '@material-ui/icons/Star';
 
 const styleClassComponent = {
   container: {
@@ -17,6 +20,8 @@ const styleClassComponent = {
   // TODO: use breakpoints (for which a change to a funcional component
   // would be necessary, I think)
   avatar: {
+    // here, breakpoint would make sense, for which I would need to change
+      // the class component to a functional one
     height: 60,
     width: 60
   },
@@ -34,6 +39,9 @@ const styleClassComponent = {
   },
   activitiesWrapper: {
     width: "100%"
+  },
+  expPanelSum: {
+    padding: 8
   }
 }
 
@@ -60,6 +68,7 @@ class Itinerary extends React.Component {
   }
 
   render() {
+  
     return (
       <ExpansionPanel
         id="expPanel"
@@ -70,6 +79,7 @@ class Itinerary extends React.Component {
           expandIcon={<ExpandMoreIcon />}
           aria-controls="panel1bh-content"
           id="panel1bh-header"
+          style={styleClassComponent.expPanelSum}
         >
 
           <Grid
@@ -145,18 +155,32 @@ class Itinerary extends React.Component {
 
               </Grid>
 
-              <Grid item container className="hashtags" style={styleClassComponent.textWrap}>
-                {this.props.itin.hashtags.map(hashtag => {
-                   return (
-                     <Typography
-                      noWrap
-                      style={styleClassComponent.marginRight}
-                      key={hashtag}
-                    >
-                      {"#" + hashtag}
-                    </Typography>
-                   )
-                 })}
+              <Grid item container justify="space-between" wrap="nowrap">
+
+                <Grid item container className="hashtags" style={styleClassComponent.textWrap}>
+                  {this.props.itin.hashtags.map(hashtag => {
+                    return (
+                      <Typography
+                        noWrap
+                        style={styleClassComponent.marginRight}
+                        key={hashtag}
+                      >
+                        {"#" + hashtag}
+                      </Typography>
+                    )
+                  })}
+                </Grid>
+
+                <Grid item>
+                  {
+                    this.props.favorite
+                    ?
+                    <StarIcon onClick={event => this.props.onClick(event, this.props.itin.title)} />
+                    :
+                    <StarBorderIcon onClick={event => this.props.onClick(event, this.props.itin.title)} />
+                  }
+                </Grid>
+
               </Grid>
 
             </Grid>
@@ -183,16 +207,31 @@ class Itinerary extends React.Component {
 
 class Itineraries extends React.Component {
   componentDidMount() {
+    // fetch itineraries
     this.props.fetchItineraries(this.props.cityName,
-        window.localStorage.getItem("userToken"))
+        window.localStorage.getItem("userToken"));
+
+    // get favorited itineraries if user is logged in (i.e. token exists)
+    if (window.localStorage.getItem("userToken")) {
+      this.props.getFavitin(window.localStorage.getItem("userToken"));
+    }
+  }
+
+  handleFavoriting(event, itinTitle) {
+    // prevent expansion panel from expanding
+    event.stopPropagation();
+    
+    this.props.postFavitin(itinTitle, window.localStorage.getItem("userToken"))
   }
 
   render() {
     const itineraries = this.props.itineraries.map(itin => {
       return (
         <Itinerary 
-        itin={itin}
-        key={itin._id}
+          itin={itin}
+          key={itin._id}
+          favorite={this.props.favoriteItineraries.includes(itin.title)}
+          onClick={(event, itinTitle) => this.handleFavoriting(event, itinTitle)}
         />
       )
     })
@@ -212,12 +251,15 @@ function mapStateToProps(state, ownProps) {
     itineraries: state.itinerary.itineraries,
     isFetching: state.itinerary.isFetching,
     cityName,
+    favoriteItineraries: state.user.favoriteItineraries
   }
 };
 
 const mapDispatchToProps = dispatch => {
   return {
     fetchItineraries: (cityName, token) => dispatch(fetchItineraries(cityName, token)),
+    getFavitin: token => dispatch(getFavitin(token)),
+    postFavitin: (itin, token) => dispatch(postFavitin(itin, token)),
   }
 };
 

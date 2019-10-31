@@ -8,7 +8,13 @@ import {
   LOGOUT_USER_REQUEST,
   LOGOUT_USER_FAILURE,
   LOGOUT_USER_SUCCESS,
-  STORE_USER_INFO
+  STORE_USER_INFO,
+  GET_FAVITIN_REQUEST,
+  GET_FAVITIN_SUCCESS,
+  GET_FAVITIN_FAILURE,
+  POST_FAVITIN_REQUEST,
+  POST_FAVITIN_FAILURE,
+  POST_FAVITIN_SUCCESS
 } from "../actions/userActions";
 
 const postInitialState = {
@@ -41,7 +47,10 @@ const userInitialState = {
   isLoggedIn: false,
   userEmail: "",
   userImage: "",
-  userId: ""
+  userId: "",
+  favoriteItineraries: [],
+  gettingFavoriteItineraries: false,
+  postingFavoriteItinerary: false
 }
 
 // Login/Logout User
@@ -83,7 +92,32 @@ function userReducer(state = userInitialState, action) {
         userImage: "",
         userId: ""
       })
-    default:
+    case GET_FAVITIN_REQUEST:
+      return Object.assign({}, state, {
+        gettingFavoriteItineraries: true
+      })
+    case GET_FAVITIN_FAILURE:
+      return Object.assign({}, state, {
+        gettingFavoriteItineraries: false
+      })
+    case GET_FAVITIN_SUCCESS:
+      return Object.assign({}, state, {
+        gettingFavoriteItineraries: false,
+        favoriteItineraries: action.favItin
+      })
+    case POST_FAVITIN_REQUEST:
+      return Object.assign({}, state, {
+        postingFavoriteItinerary: true
+      })
+    case POST_FAVITIN_FAILURE:
+      return Object.assign({}, state, {
+        postingFavoriteItinerary: false
+      })
+    case POST_FAVITIN_SUCCESS:
+      return Object.assign({}, state, {
+        postingFavoriteItinerary: false
+      })
+      default:
       return state
   }
 }
