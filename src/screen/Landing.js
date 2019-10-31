@@ -157,15 +157,14 @@ function LandingMain(props) {
 
 class Landing extends React.Component {
   componentDidMount() {
-    this.props.fetchCities(window.localStorage.getItem("userToken"));
-
-    //TODO: PROBLEM: logs you in if you access landing page with
-    // url including token (e.g. if you load page from the urls saved in your browser)
-
     // if token in url (google login), save token in local storage
+        // and reroute to landing page w/o token in url
     if (this.props.match.params.token) {
       window.localStorage.setItem("userToken", this.props.match.params.token);
+      this.props.history.push("/")
     };
+
+    this.props.fetchCities(window.localStorage.getItem("userToken"));
   }
 
   render() {
