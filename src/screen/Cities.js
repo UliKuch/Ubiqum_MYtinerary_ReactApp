@@ -74,7 +74,7 @@ function City(props) {
 
 class Cities extends React.Component {
   componentDidMount() {
-    this.props.fetchCities();
+    this.props.fetchCities(window.localStorage.getItem("userToken"));
   }
 
   handleCitiesFilterChange(inp) {
@@ -122,7 +122,7 @@ function mapStateToProps(state) {
 
 const mapDispatchToProps = dispatch => {
   return {
-    fetchCities: () => dispatch(fetchCities()),
+    fetchCities: token => dispatch(fetchCities(token)),
     filterCities: (filteredCities) => dispatch(filterCities(filteredCities))
   }
 };

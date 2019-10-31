@@ -49,8 +49,9 @@ function Navbar(props) {
     setAnchorEl(null);
   };
 
-  const handleLogout = () => {
-    props.logoutUser(window.localStorage.getItem("userToken"))
+  const handleLogout = async () => {
+    await props.logoutUser(window.localStorage.getItem("userToken"));
+    window.location.reload();
   }
 
   // use props to set which element in drop down navigation is
@@ -114,8 +115,8 @@ function Navbar(props) {
                 :
                 <MenuItem
                   onClick={() => {
-                    handleLogout(props.userEmail);
                     handleClose(setAnchorEl1);
+                    handleLogout(props.userEmail);
                   }}
                 >
                   Logout

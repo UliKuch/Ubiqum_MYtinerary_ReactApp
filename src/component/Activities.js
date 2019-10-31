@@ -46,7 +46,8 @@ class Activities extends React.Component {
   componentDidMount() {
     // TODO: only fetch activities if they are not already in store
       // (e.g. because the page was visited earlier in the same session)
-    this.props.fetchActivities(this.props.cityName, this.props.itineraryName)
+    this.props.fetchActivities(this.props.cityName, this.props.itineraryName, 
+        window.localStorage.getItem("userToken"))
   }
 
   render() {
@@ -98,8 +99,8 @@ function mapStateToProps(state, ownProps) {
 
 const mapDispatchToProps = dispatch => {
   return {
-    fetchActivities: (cityName, itineraryName) =>
-        dispatch(fetchActivities(cityName, itineraryName))
+    fetchActivities: (cityName, itineraryName, token) =>
+        dispatch(fetchActivities(cityName, itineraryName, token))
   }
 };
 

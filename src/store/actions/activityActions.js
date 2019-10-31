@@ -27,12 +27,22 @@ export function fetchActivitiesSuccess(itineraryName, activities) {
 }
 
 // thunk action creator
-export function fetchActivities(cityName, itineraryName) {
+export function fetchActivities(cityName, itineraryName, token) {
  
   return function(dispatch) {
     dispatch(fetchActivitiesRequest(itineraryName))
 
-    return fetch("http://localhost:5000/cities/" + cityName + "/itineraries/" + itineraryName)
+    return fetch("http://localhost:5000/cities/" + cityName
+        + "/itineraries/" + itineraryName, {
+          // put token in header if token exists
+          headers:
+          token ?
+          {
+            Authorization: "Bearer " + token 
+          }
+          :
+          {}
+        })
       .then(
         res => res.json(),
         // not using catch, see redux documentation (async actions)

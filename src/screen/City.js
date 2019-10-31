@@ -70,7 +70,7 @@ function CityBox(props) {
 class City extends React.Component {
   componentDidMount() {
     const cityInput = this.props.match.params.city;
-    this.props.findCity(cityInput);
+    this.props.findCity(cityInput, window.localStorage.getItem("userToken"));
   }
 
   render() {
@@ -100,7 +100,7 @@ function mapStateToProps(state) {
 
 const mapDispatchToProps = dispatch => {
   return {
-    findCity: (city) => dispatch(findCity(city))
+    findCity: (city, token) => dispatch(findCity(city, token))
   }
 };
 

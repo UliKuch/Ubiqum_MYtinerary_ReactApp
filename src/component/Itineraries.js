@@ -183,7 +183,8 @@ class Itinerary extends React.Component {
 
 class Itineraries extends React.Component {
   componentDidMount() {
-    this.props.fetchItineraries(this.props.cityName)
+    this.props.fetchItineraries(this.props.cityName,
+        window.localStorage.getItem("userToken"))
   }
 
   render() {
@@ -216,7 +217,7 @@ function mapStateToProps(state, ownProps) {
 
 const mapDispatchToProps = dispatch => {
   return {
-    fetchItineraries: (cityName) => dispatch(fetchItineraries(cityName)),
+    fetchItineraries: (cityName, token) => dispatch(fetchItineraries(cityName, token)),
   }
 };
 

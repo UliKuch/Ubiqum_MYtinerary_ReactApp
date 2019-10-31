@@ -136,7 +136,7 @@ function LandingMain(props) {
         >
           <img
             className={classes.img}
-            src="./images/circled-right-2.png"
+            src="/images/circled-right-2.png"
             alt="Clickable button displaying an arrow."
           />
         </Box>
@@ -157,7 +157,7 @@ function LandingMain(props) {
 
 class Landing extends React.Component {
   componentDidMount() {
-    this.props.fetchCities();
+    this.props.fetchCities(window.localStorage.getItem("userToken"));
 
     //TODO: PROBLEM: logs you in if you access landing page with
     // url including token (e.g. if you load page from the urls saved in your browser)
@@ -202,7 +202,7 @@ function mapStateToProps(state) {
 
 const mapDispatchToProps = dispatch => {
   return {
-    fetchCities: () => dispatch(fetchCities()),
+    fetchCities: token => dispatch(fetchCities(token)),
   }
 };
 

@@ -63,12 +63,21 @@ export function findCitySuccess(city) {
 // ----- thunk action creators -----
 
 // fetch cities
-export function fetchCities() {
+export function fetchCities(token) {
  
   return function(dispatch) {
     dispatch(fetchCitiesRequest())
 
-    return fetch("http://localhost:5000/cities/all")
+    return fetch("http://localhost:5000/cities/all", {
+      // put token in header if token exists
+      headers:
+      token ?
+      {
+        Authorization: "Bearer " + token 
+      }
+      :
+      {}
+    })
       .then(
         res => res.json(),
         // not using catch, see redux documentation (async actions)
@@ -85,12 +94,21 @@ export function fetchCities() {
 
 
 // find city
-export function findCity(city) {
+export function findCity(city, token) {
  
   return function(dispatch) {
     dispatch(findCityRequest())
 
-    return fetch(`http://localhost:5000/cities/${city}` )
+    return fetch(`http://localhost:5000/cities/${city}`, {
+      // put token in header if token exists
+      headers:
+      token ?
+      {
+        Authorization: "Bearer " + token 
+      }
+      :
+      {}
+    })
       .then(
         res => res.json(),
         // not using catch, see redux documentation (async actions)
