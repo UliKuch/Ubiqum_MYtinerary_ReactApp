@@ -137,8 +137,8 @@ class Login extends React.Component {
 
     await this.props.loginUser(user);
 
-    // route to landing page after login
-    this.props.history.push("/")
+    // reload after login (logegd in users will be rerouted to landing page)
+    window.location.reload();
   }
 
   render() {
