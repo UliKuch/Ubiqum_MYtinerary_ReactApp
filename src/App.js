@@ -36,7 +36,8 @@ class App extends React.Component {
         this.props.storeUserInfo({
           userEmail: tokenPlain.email,
           userImage: tokenPlain.userImage,
-          userId: tokenPlain.id
+          userId: tokenPlain.id,
+          username: tokenPlain.username
         })
       }
     }

@@ -48,6 +48,7 @@ const userInitialState = {
   userEmail: "",
   userImage: "",
   userId: "",
+  username: "",
   favoriteItineraries: [],
   gettingFavoriteItineraries: false,
   postingFavoriteItinerary: false
@@ -59,8 +60,9 @@ function userReducer(state = userInitialState, action) {
     case STORE_USER_INFO:
       return Object.assign({}, state, {
         userEmail: action.userInfo.userEmail,
-        userImage: action.userInfo.userImage,
+        userImage: action.userInfo.userImage || "",
         userId: action.userInfo.userId,
+        username: action.userInfo.username || "",
         isLoggedIn: true
       })
     case LOGIN_USER_REQUEST:
@@ -90,7 +92,8 @@ function userReducer(state = userInitialState, action) {
         isLoggedIn: false,
         userEmail: "",
         userImage: "",
-        userId: ""
+        userId: "",
+        username: ""
       })
     case GET_FAVITIN_REQUEST:
       return Object.assign({}, state, {

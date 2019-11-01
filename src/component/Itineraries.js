@@ -221,7 +221,12 @@ class Itineraries extends React.Component {
     // prevent expansion panel from expanding
     event.stopPropagation();
     
-    this.props.postFavitin(itinTitle, window.localStorage.getItem("userToken"))
+    // favorite/unfavorite if user is logged in, send alert if not
+    if (window.localStorage.getItem("userToken")) {
+      this.props.postFavitin(itinTitle, window.localStorage.getItem("userToken"))
+    } else {
+      alert("You need to be logged in to favorite itineraries.")
+    }
   }
 
   render() {
