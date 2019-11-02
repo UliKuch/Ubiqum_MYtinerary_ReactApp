@@ -1,6 +1,7 @@
 import React from 'react';
 import Loader from './Loader'
 import Activities from './Activities'
+import Comments from './Comments'
 
 // redux
 import { connect } from "react-redux";
@@ -37,7 +38,7 @@ const styleClassComponent = {
   text: {
     display: "block"
   },
-  activitiesWrapper: {
+  activitiesAndCommentsWrapper: {
     width: "100%"
   },
   expPanelSum: {
@@ -189,13 +190,19 @@ class Itinerary extends React.Component {
 
         </ExpansionPanelSummary>
         <ExpansionPanelDetails>
-          <div style={styleClassComponent.activitiesWrapper}>
+          <div style={styleClassComponent.activitiesAndCommentsWrapper}>
             {
               (!this.state.rendered) ||
+              <div>
               <Activities
-              cityName={this.props.itin.city}
-              itineraryName={this.props.itin.title}
+                cityName={this.props.itin.city}
+                itineraryName={this.props.itin.title}
               />
+              <Comments
+                cityName={this.props.itin.city}
+                itin={this.props.itin.title}
+              />
+              </div>
             } 
           </div>
         </ExpansionPanelDetails>

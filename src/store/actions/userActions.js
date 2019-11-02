@@ -222,7 +222,7 @@ export function postFavitin(itin, token) {
     dispatch(postFavitinRequest())
     try {
       const body = {itineraryTitle: itin};
-      const response = await axios.post(
+      await axios.post(
         "http://localhost:5000/user/favoriteItineraries", body, {
           headers: { Authorization: "Bearer " + token }
         }
@@ -231,7 +231,7 @@ export function postFavitin(itin, token) {
       // GET favorite itineraries to update itineraries in store
       dispatch(getFavitin(token))
 
-      return dispatch(postFavitinSuccess(response))
+      return dispatch(postFavitinSuccess())
     } catch (error) {
       console.log(error);
       return dispatch(postFavitinFailure())
