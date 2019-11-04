@@ -17,6 +17,9 @@ import { fetchCities } from "../store/actions/cityActions";
 import { Container, Typography, Box, CardMedia, Card, CardContent } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 
+// decoding jwt
+const jwtDecode = require('jwt-decode');
+
 const useStyles = makeStyles(theme => ({
   img: {
     height: "100%"
@@ -160,7 +163,21 @@ class Landing extends React.Component {
     // if token in url (google login), save token in local storage
         // and reroute to landing page w/o token in url
     if (this.props.match.params.token) {
-      window.localStorage.setItem("userToken", this.props.match.params.token);
+      // *1000 because token stores time in seconds, but js uses milliseconds
+      const tokenCreated = jwtDecode(this.props.match.params.token).iat * 1000;
+
+      // only add token if it is not older than 30 seconds
+      if ((Date.now() - tokenCreated) < 30000) {
+        window.localStorage.setItem("userToken", this.props.match.params.token);
+        console.log("Token has been added to local storage");
+        console.log("Time elapsed after token creation (in milliseconds): " + 
+            (Date.now() - tokenCreated));
+      } else {
+        console.log("Token could not be saved. Please log in again.");
+        console.log("Time elapsed after token creation (in milliseconds): " + 
+            (Date.now() - tokenCreated));
+      }
+
       this.props.history.push("/")
     };
 
