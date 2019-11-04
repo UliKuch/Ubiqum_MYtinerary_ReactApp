@@ -14,6 +14,7 @@ import Avatar from '@material-ui/core/Avatar';
 // redux
 import { connect } from "react-redux";
 import { logoutUser } from "../store/actions/userActions";
+import { Typography } from '@material-ui/core';
 
 const DropDownMenu = withStyles({
   paper: {
@@ -66,6 +67,7 @@ function Navbar(props) {
             display="flex"
             justifyContent="space-between"
             style={{ width: '100%' }}
+            alignItems="center"
           >
             <IconButton
               aria-label="account"
@@ -123,6 +125,8 @@ function Navbar(props) {
                 </MenuItem>
               }
             </DropDownMenu>
+            <Typography variant="h6" component="h1">MYtinerary</Typography>
+
             <IconButton
               aria-label="menu"
               aria-controls="hamburger-menu"
