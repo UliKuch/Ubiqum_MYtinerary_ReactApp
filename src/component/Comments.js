@@ -12,13 +12,32 @@ import {
   TextField,
   Button
 } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
 
+const useStyles = makeStyles(theme => ({
+  commentPaper: {
+    marginBottom: theme.spacing(2)
+  }
+
+
+}));
 
 function Comment(props) {
+  const classes = useStyles();
+
+  // format date
+  const date = new Date(props.comment.date);
+
+  // set username or, if no username exists, email as name of commenter
+  const name = props.comment.authorUsername || props.comment.authorEmail;
+
   return (
-    <Paper>
-      <Typography variant="h6" component="h4">
-        {props.comment.author + " commented on " + props.comment.date + ":"}
+    <Paper
+      className={classes.commentPaper}
+    >
+      <Typography mb={3} variant="h6" component="h4">
+        {name + " commented on " +
+            date.toLocaleString() + ":"}
       </Typography>
       <Typography component="p">
         {props.comment.body}
@@ -40,7 +59,10 @@ function AddComment(props) {
 
   return (
     <form
-      onSubmit={event => props.handleSubmit(event, newComment.commentBody)}
+      onSubmit={event => {
+        props.handleSubmit(event, newComment.commentBody);
+        setNewComment({commentBody: ""});
+      }}
     >
       <TextField
         required
@@ -86,7 +108,7 @@ function Comments(props) {
 
     // reload comments
     await props.fetchComments(props.itin, props.cityName,
-        window.localStorage.getItem("userToken"))
+        window.localStorage.getItem("userToken"));
   }
 
   const comments = props.comments.map(comment => {
