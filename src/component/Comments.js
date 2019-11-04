@@ -17,9 +17,19 @@ import { makeStyles } from '@material-ui/core/styles';
 const useStyles = makeStyles(theme => ({
   commentPaper: {
     marginBottom: theme.spacing(2)
+  },
+  formBody: {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center"
+  },
+  submitButton: {
+    maxWidth: 300,
+    marginTop: theme.spacing(2)
+  },
+  commentInputField: {
+    width: "80%"
   }
-
-
 }));
 
 function Comment(props) {
@@ -48,6 +58,7 @@ function Comment(props) {
 
 
 function AddComment(props) {
+  const classes = useStyles();
 
   const [newComment, setNewComment] = React.useState({
     commentBody: "",
@@ -63,27 +74,27 @@ function AddComment(props) {
         props.handleSubmit(event, newComment.commentBody);
         setNewComment({commentBody: ""});
       }}
+      className={classes.formBody}
     >
       <TextField
         required
+        multiline
+        helperText={props.username ? "" : "If you did not provide a username, your email address will be displayed with your comment."}
         placeholder="Enter your comment here."
         value={newComment.commentBody}
         onChange={handleChangeTextField("commentBody")}
+        className={classes.commentInputField}
       />
       <Button
         variant="contained"
         color="secondary"
         type="submit"
+        className={classes.submitButton}
       >
         Submit Comment
       </Button>
     </form>
   )
-
-
-  // add warning that if there is no username, email will be used as username
-
-
 };
 
 
@@ -130,6 +141,7 @@ function Comments(props) {
       ?
       <AddComment
         handleSubmit={(event, commentBody) => handleSubmit(event, commentBody)}
+        username={props.username}
       />
       :
       <Typography variant="h5">
@@ -152,7 +164,8 @@ function mapStateToProps(state, ownProps) {
         state.itinerary[itin].comments
         : [] : [],
     itin,
-    cityName
+    cityName,
+    username: state.user.username ? state.user.username : ""
   }
 };
 
