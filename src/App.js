@@ -11,9 +11,22 @@ import Login from './screen/Login';
 import { connect } from "react-redux";
 import { storeUserInfo, logoutUser } from "./store/actions/userActions";
 
+// Material-UI
+import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
+
 // decoding jwt
 const jwtDecode = require('jwt-decode');
 
+const theme = createMuiTheme({
+  palette: {
+    primary: {
+      main: "#DB2F00"
+    },
+    secondary: {
+      main: "#3C4FC2"
+    }
+  },
+});
 
 class App extends React.Component {
   componentDidMount() {
@@ -45,18 +58,20 @@ class App extends React.Component {
 
   render() {
     return (
-      <BrowserRouter>
-        <div className="App">
-          <Switch>
-            <Route exact path='/' component={Landing} />
-            <Route path='/logged_in/:token' component={Landing} />
-            <Route exact path='/cities' component={Cities} />
-            <Route path='/cities/:city' component={City} />
-            <Route path='/user/create-account' component={CreateAccount} />
-            <Route path='/user/login' component={Login} />
-          </Switch>
-        </div>
-      </BrowserRouter>  
+      <ThemeProvider theme={theme}>
+        <BrowserRouter>
+          <div className="App">
+            <Switch>
+              <Route exact path='/' component={Landing} />
+              <Route path='/logged_in/:token' component={Landing} />
+              <Route exact path='/cities' component={Cities} />
+              <Route path='/cities/:city' component={City} />
+              <Route path='/user/create-account' component={CreateAccount} />
+              <Route path='/user/login' component={Login} />
+            </Switch>
+          </div>
+        </BrowserRouter>  
+      </ThemeProvider>
     ); 
   }
 }

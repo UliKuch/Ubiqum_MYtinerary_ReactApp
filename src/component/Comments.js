@@ -59,6 +59,9 @@ const useStyles = makeStyles(theme => ({
     margin: theme.spacing(1)
   },
   commentTitle: {
+    overflow: "hidden"
+  },
+  commentTitleWithIcons: {
     overflow: "hidden",
     marginRight: 50
   },
@@ -123,12 +126,15 @@ function Comment(props) {
         <Typography
           variant="h6"
           component="h4"
-          className={classes.commentTitle}
+          // only add margin for edit/delete icons if user is author of comment
+          className={(props.comment.authorId === props.userId) ? 
+              classes.commentTitleWithIcons : classes.commentTitle}
         >
           {name + " commented on " +
               date.toLocaleString() + ":"}
         </Typography>
         {
+          // display edit/delete icons if user is author of comment
           (props.comment.authorId === props.userId)
           &&
           <Grid
@@ -142,6 +148,8 @@ function Comment(props) {
       </Grid>
 
       {
+        // display comment as text field with save/discard changes buttons
+          // if editing=true, else as typography
         editing
         ?
         <form
@@ -181,6 +189,7 @@ function Comment(props) {
       }
       
       {
+        // display last updated if comment was updated
         lastUpdated &&
         <Typography variant="caption" gutterBottom>
           {"last updated at " + lastUpdated.toLocaleString()}
