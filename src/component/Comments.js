@@ -40,9 +40,15 @@ const useStyles = makeStyles(theme => ({
   commentInputField: {
     width: "80%"
   },
+  commentIconContainerParent: {
+    position: "relative"
+  },
   commentIconContainer: {
+    position: "absolute",
+    right: 0,
+    top: 0,
     marginLeft: theme.spacing(3),
-    marginTop: theme.spacing(1)
+    maxWidth: 50
   },
   commentFormBody: {
     display: "flex",
@@ -51,6 +57,13 @@ const useStyles = makeStyles(theme => ({
   editButtons: {
     maxWidth: 100,
     margin: theme.spacing(1)
+  },
+  commentTitle: {
+    overflow: "hidden",
+    marginRight: 50
+  },
+  commentMainText: {
+    overflow: "hidden"
   }
 }));
 
@@ -105,8 +118,13 @@ function Comment(props) {
         item container
         direction="row"
         justify="center"
+        className={classes.commentIconContainerParent}
       >
-        <Typography variant="h6" component="h4">
+        <Typography
+          variant="h6"
+          component="h4"
+          className={classes.commentTitle}
+        >
           {name + " commented on " +
               date.toLocaleString() + ":"}
         </Typography>
@@ -157,7 +175,7 @@ function Comment(props) {
           </div>
         </form>
         :
-        <Typography component="p">
+        <Typography component="p" className={classes.commentMainText}>
           {comment.commentBody}
         </Typography>
       }
