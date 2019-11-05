@@ -3,22 +3,32 @@ import Loader from './Loader'
 
 // redux
 import { connect } from "react-redux";
-import { fetchComments, postComment } from "../store/actions/itineraryActions";
+import {
+  fetchComments,
+  postComment,
+  editComment,
+  deleteComment
+} from "../store/actions/itineraryActions";
 
 // Material-UI
 import {
   Paper,
   Typography,
   TextField,
-  Button
+  Button,
+  Grid
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
+import EditIcon from '@material-ui/icons/Edit';
+import DeleteIcon from '@material-ui/icons/Delete';
 
 const useStyles = makeStyles(theme => ({
   commentPaper: {
-    marginBottom: theme.spacing(2)
+    marginBottom: theme.spacing(2),
+    display: "flex",
+    flexDirection: "column"
   },
-  formBody: {
+  addCommentFormBody: {
     display: "flex",
     flexDirection: "column",
     alignItems: "center"
@@ -29,29 +39,135 @@ const useStyles = makeStyles(theme => ({
   },
   commentInputField: {
     width: "80%"
+  },
+  commentIconContainer: {
+    marginLeft: theme.spacing(3),
+    marginTop: theme.spacing(1)
+  },
+  commentFormBody: {
+    display: "flex",
+    flexDirection: "column",
+  },
+  editButtons: {
+    maxWidth: 100,
+    margin: theme.spacing(1)
   }
 }));
 
 function Comment(props) {
   const classes = useStyles();
 
+  const [editing, setEditing] = React.useState(
+    false,
+  );
+
+  const [comment, setComment] = React.useState({
+    commentBody: props.comment.body,
+  });
+
   // format date
   const date = new Date(props.comment.date);
+  const lastUpdated = props.comment.lastUpdateAt ?
+      new Date(props.comment.lastUpdateAt) : null;
 
   // set username or, if no username exists, email as name of commenter
   const name = props.comment.authorUsername || props.comment.authorEmail;
+
+  // change text of comment text field
+  const handleChangeTextField = () => event => {
+    setComment({ ...comment, commentBody: event.target.value });
+  };
+
+  // discard edit - reset comment to original text
+  const handleDiscard = () => {
+    setComment({...comment, commentBody: props.comment.body});
+    setEditing(false);
+  }
+
+  // edit comment
+  const handleSubmit = event => {
+    event.preventDefault();
+    // only submit changes if comment was actually updated
+    if (comment.commentBody !== props.comment.body) {
+      // TODO: handle multi line comments (saved as multi line in db, but not displayed as such -
+        // will be changed even if nothing was edited)
+      props.handleEdit(event, comment.commentBody, props.comment._id);
+    }
+    setEditing(false);
+  }
+
 
   return (
     <Paper
       className={classes.commentPaper}
     >
-      <Typography mb={3} variant="h6" component="h4">
-        {name + " commented on " +
-            date.toLocaleString() + ":"}
-      </Typography>
-      <Typography component="p">
-        {props.comment.body}
-      </Typography>
+      <Grid
+        item container
+        direction="row"
+        justify="center"
+      >
+        <Typography variant="h6" component="h4">
+          {name + " commented on " +
+              date.toLocaleString() + ":"}
+        </Typography>
+        {
+          (props.comment.authorId === props.userId)
+          &&
+          <Grid
+            item
+            className={classes.commentIconContainer}
+          >
+            <EditIcon onClick={event => setEditing(true)} />
+            <DeleteIcon onClick={event => props.handleDelete(event, props.comment._id)} />          
+          </Grid>
+        }
+      </Grid>
+
+      {
+        editing
+        ?
+        <form
+          className={classes.commentFormBody}
+          onSubmit={event => handleSubmit(event)}
+        >
+          <TextField
+            value={comment.commentBody}
+            onChange={handleChangeTextField("commentBody")}
+          />
+          <div>
+            <Button
+              variant="contained"
+              color="secondary"
+              type="submit"
+              className={classes.editButtons}
+              disabled={!editing}
+            >
+              Save
+            </Button>
+            <Button
+              variant="contained"
+              color="secondary"
+              type="button"
+              className={classes.editButtons}
+              disabled={!editing}
+              onClick={handleDiscard}
+            >
+              Discard
+            </Button>
+          </div>
+        </form>
+        :
+        <Typography component="p">
+          {comment.commentBody}
+        </Typography>
+      }
+      
+      {
+        lastUpdated &&
+        <Typography variant="caption" gutterBottom>
+          {"last updated at " + lastUpdated.toLocaleString()}
+        </Typography>
+      }
     </Paper>
   )
 };
@@ -74,7 +190,7 @@ function AddComment(props) {
         props.handleSubmit(event, newComment.commentBody);
         setNewComment({commentBody: ""});
       }}
-      className={classes.formBody}
+      className={classes.addCommentFormBody}
     >
       <TextField
         required
@@ -90,6 +206,7 @@ function AddComment(props) {
         color="secondary"
         type="submit"
         className={classes.submitButton}
+        disabled={props.postingComment}
       >
         Submit Comment
       </Button>
@@ -109,6 +226,7 @@ function Comments(props) {
       window.localStorage.getItem("userToken"))
   }, [props.itin, props.cityName, props.fetchComments])
 
+  // POST comment
   const handleSubmit = async (event, commentBody) => {
     // prevent page reload
     event.preventDefault();
@@ -120,13 +238,39 @@ function Comments(props) {
     // reload comments
     await props.fetchComments(props.itin, props.cityName,
         window.localStorage.getItem("userToken"));
-  }
+  };
+
+  // edit comment
+  const handleEdit = async (event, commentBody, commentId) => {
+    // PUT edit comment
+    await props.editComment(commentBody, commentId, props.itin, props.cityName,
+      window.localStorage.getItem("userToken"));
+
+    // reload comments
+    await props.fetchComments(props.itin, props.cityName,
+      window.localStorage.getItem("userToken"));
+  };
+
+  // delete comment
+  const handleDelete = async (event, commentId) => {
+    // DELETE comment
+    await props.deleteComment(commentId, props.itin, props.cityName,
+      window.localStorage.getItem("userToken"));
+
+    // reload comments
+    await props.fetchComments(props.itin, props.cityName,
+      window.localStorage.getItem("userToken"));
+  };
 
   const comments = props.comments.map(comment => {
     return (
       <Comment
         comment={comment}
         key={comment._id}
+        username={props.username}
+        userId={props.userId}
+        handleEdit={(event, commentBody, commentId) => handleEdit(event, commentBody, commentId)}
+        handleDelete={(event, commentId) => handleDelete(event, commentId)}
       />
     )
   })
@@ -142,6 +286,7 @@ function Comments(props) {
       <AddComment
         handleSubmit={(event, commentBody) => handleSubmit(event, commentBody)}
         username={props.username}
+        postingComment={props.postingComment}
       />
       :
       <Typography variant="h5">
@@ -163,9 +308,12 @@ function mapStateToProps(state, ownProps) {
         state.itinerary[itin].comments ?
         state.itinerary[itin].comments
         : [] : [],
+    postingComment: state.itinerary[itin] ?
+    state.itinerary[itin].postingComment : false, 
     itin,
     cityName,
-    username: state.user.username ? state.user.username : ""
+    username: state.user.username ? state.user.username : "",
+    userId: state.user.userId ? state.user.userId : ""
   }
 };
 
@@ -174,7 +322,11 @@ const mapDispatchToProps = dispatch => {
     fetchComments: (itin, cityName, token) =>
         dispatch(fetchComments(itin, cityName, token)),
     postComment: (commentBody, itin, cityName, token) =>
-        dispatch(postComment(commentBody, itin, cityName, token))
+        dispatch(postComment(commentBody, itin, cityName, token)),
+    editComment: (commentBody, commentId, itin, cityName, token) =>
+        dispatch(editComment(commentBody, commentId, itin, cityName, token)),
+    deleteComment: (commentId, itin, cityName, token) =>
+        dispatch(deleteComment(commentId, itin, cityName, token)),
   }
 };
 

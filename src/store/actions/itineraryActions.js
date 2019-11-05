@@ -9,9 +9,17 @@ export const FETCH_COMMENTS_REQUEST = "FETCH_COMMENTS_REQUEST";
 export const FETCH_COMMENTS_FAILURE = "FETCH_COMMENTS_FAILURE";
 export const FETCH_COMMENTS_SUCCESS = "FETCH_COMMENTS_SUCCESS";
 
-export const POST_COMMENT_REQUEST = "POST_COMMENTS_REQUEST";
-export const POST_COMMENT_FAILURE = "POST_COMMENTS_FAILURE";
-export const POST_COMMENT_SUCCESS = "POST_COMMENTS_SUCCESS";
+export const POST_COMMENT_REQUEST = "POST_COMMENT_REQUEST";
+export const POST_COMMENT_FAILURE = "POST_COMMENT_FAILURE";
+export const POST_COMMENT_SUCCESS = "POST_COMMENT_SUCCESS";
+
+export const EDIT_COMMENT_REQUEST = "EDIT_COMMENT_REQUEST";
+export const EDIT_COMMENT_FAILURE = "EDIT_COMMENT_FAILURE";
+export const EDIT_COMMENT_SUCCESS = "EDIT_COMMENT_SUCCESS";
+
+export const DELETE_COMMENT_REQUEST = "DELETE_COMMENT_REQUEST";
+export const DELETE_COMMENT_FAILURE = "DELETE_COMMENT_FAILURE";
+export const DELETE_COMMENT_SUCCESS = "DELETE_COMMENT_SUCCESS";
 
 
 // ----- action creators ------
@@ -71,6 +79,46 @@ export function postCommentFailure(itin) {
 export function postCommentSuccess(itin) {
   return {
     type: POST_COMMENT_SUCCESS,
+    itin
+  }
+}
+
+// edit comment
+export function editCommentRequest(itin) {
+  return {
+    type: EDIT_COMMENT_REQUEST,
+    itin
+  }
+}
+export function editCommentFailure(itin) {
+  return {
+    type: EDIT_COMMENT_FAILURE,
+    itin
+  }
+}
+export function editCommentSuccess(itin) {
+  return {
+    type: EDIT_COMMENT_SUCCESS,
+    itin
+  }
+}
+
+// DELETE comment
+export function deleteCommentRequest(itin) {
+  return {
+    type: DELETE_COMMENT_REQUEST,
+    itin
+  }
+}
+export function deleteCommentFailure(itin) {
+  return {
+    type: DELETE_COMMENT_FAILURE,
+    itin
+  }
+}
+export function deleteCommentSuccess(itin) {
+  return {
+    type: DELETE_COMMENT_SUCCESS,
     itin
   }
 }
@@ -154,6 +202,56 @@ export function postComment(commentBody, itin, cityName, token) {
     } catch (error) {
       console.log(error);
       return dispatch(postCommentFailure(itin))
+    }
+  }
+}
+
+// edit comment
+export function editComment(commentBody, commentId, itin, cityName, token) {
+ 
+  return async function(dispatch) {
+    dispatch(editCommentRequest(itin))
+
+    try {
+      const body = {
+        commentBody: commentBody,
+        commentId: commentId
+      }
+
+      await axios.put(
+        "http://localhost:5000/cities/" + cityName
+        + "/itineraries/" + itin + "/comment",
+        body,
+        {headers: {
+            "Authorization": "Bearer " + token,
+        }}
+      )
+      return dispatch(editCommentSuccess(itin))
+    } catch (error) {
+      console.log(error);
+      return dispatch(editCommentFailure(itin))
+    }
+  }
+}
+
+// DELETE comment
+export function deleteComment(commentId, itin, cityName, token) {
+ 
+  return async function(dispatch) {
+    dispatch(deleteCommentRequest(itin))
+
+    try {
+      await axios.delete(
+        "http://localhost:5000/cities/" + cityName
+        + "/itineraries/" + itin + "/comment/" + commentId,
+        {headers: {
+            "Authorization": "Bearer " + token,
+        }}
+      )
+      return dispatch(deleteCommentSuccess(itin))
+    } catch (error) {
+      console.log(error);
+      return dispatch(deleteCommentFailure(itin))
     }
   }
 }

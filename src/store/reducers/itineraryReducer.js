@@ -7,7 +7,13 @@ import {
   FETCH_COMMENTS_SUCCESS,
   POST_COMMENT_REQUEST,
   POST_COMMENT_FAILURE,
-  POST_COMMENT_SUCCESS
+  POST_COMMENT_SUCCESS,
+  EDIT_COMMENT_REQUEST,
+  EDIT_COMMENT_FAILURE,
+  EDIT_COMMENT_SUCCESS,
+  DELETE_COMMENT_REQUEST,
+  DELETE_COMMENT_FAILURE,
+  DELETE_COMMENT_SUCCESS
 } from "../actions/itineraryActions"
 
 const initialState = {
@@ -77,6 +83,54 @@ function itineraryReducer(state = initialState, action) {
         [action.itin]: {
           ...state[action.itin],
           postingComment: false
+        }
+      }
+    case EDIT_COMMENT_REQUEST:
+      return {
+        ...state,
+        [action.itin]: {
+          ...state[action.itin],
+          editingComment: true
+        }
+      }
+    case EDIT_COMMENT_FAILURE:
+      return {
+        ...state,
+        [action.itin]: {
+          ...state[action.itin],
+          editingComment: false
+        }
+      }
+    case EDIT_COMMENT_SUCCESS:
+      return {
+        ...state,
+        [action.itin]: {
+          ...state[action.itin],
+          editingComment: false
+        }
+      }
+    case DELETE_COMMENT_REQUEST:
+      return {
+        ...state,
+        [action.itin]: {
+          ...state[action.itin],
+          deletingComment: true
+        }
+      }
+    case DELETE_COMMENT_FAILURE:
+      return {
+        ...state,
+        [action.itin]: {
+          ...state[action.itin],
+          deletingComment: false
+        }
+      }
+    case DELETE_COMMENT_SUCCESS:
+      return {
+        ...state,
+        [action.itin]: {
+          ...state[action.itin],
+          deletingComment: false
         }
       }
     default:
