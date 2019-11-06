@@ -50,6 +50,7 @@ const useStyles = makeStyles(theme => ({
     backgroundColor: theme.palette.background.paper,
     marginRight: theme.spacing(3),
     marginLeft: theme.spacing(3),
+    overflow: "hidden"
   }
 }));
 

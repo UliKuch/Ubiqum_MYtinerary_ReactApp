@@ -1,6 +1,5 @@
 import React from 'react';
 import Footer from '../component/Footer';
-import Itineraries from '../component/Itineraries.js'
 import Loader from '../component/Loader'
 import Navbar from '../component/Navbar'
 
@@ -9,7 +8,10 @@ import { connect } from "react-redux";
 import { findCity } from "../store/actions/cityActions";
 
 // Material-UI
-import { Typography, Box } from '@material-ui/core';
+import {
+  Box,
+  Typography
+} from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 
 // styles instead of makeStyles in order to use props (cityImage)
@@ -38,10 +40,12 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-function CityBox(props) {
+
+function CityLogo(props) {
   const city = props.city;
 
   const classes = useStyles();
+
   return (
     <div>
       <Box
@@ -56,53 +60,43 @@ function CityBox(props) {
           {city.name}
         </Typography>
       </Box>
-      <Typography>
-        Available MYtineraries:
-      </Typography>
-      <Itineraries
-          cityName={city.name}
-      />  
     </div>
-
   )
 }
 
-class City extends React.Component {
-  componentDidMount() {
-    const cityInput = this.props.match.params.city;
-    this.props.findCity(cityInput, window.localStorage.getItem("userToken"));
-  }
+function AddItinerary(props) {
+  const cityNamefromUrl = props.match.params.city;
 
-  render() {
-    const city = this.props.city;
+  // fetch city info
+  React.useEffect(() => {  
+    props.findCity.call(null, cityNamefromUrl,
+      window.localStorage.getItem("userToken"))
+  }, [cityNamefromUrl, props.findCity])
+  
 
-    return (
-      <div>
-        <Navbar />
-        {(this.props.isFetching || !city.name) ? <Loader /> 
-        : <CityBox
-            city={city}
-          />
-        }
-        <a href=".">Choose another city</a>
-        {
-          this.props.loggedIn
-          ?
-          <a href={`/cities/${this.props.city.name}/add-itinerary`} style={{display: "block"}}>Add itinerary</a> 
-          :
-          ""
-        }
-        <Footer />
-      </div>
-    )
-  }
+
+  return (
+    <div>
+      <Navbar />
+      {
+        (props.isFetching || !props.city.name)
+        ?
+        <Loader /> 
+        :
+        <CityLogo
+          city={props.city}
+        />
+      }
+
+      <Footer />
+    </div>
+  )
 }
 
 function mapStateToProps(state) {
   return {
     city: state.findCity.city,
-    isFetching: state.findCity.isFetching,
-    loggedIn: state.user ? state.user.isLoggedIn : false
+    isFetching: state.findCity.isFetching
   }
 };
 
@@ -115,4 +109,4 @@ const mapDispatchToProps = dispatch => {
 export default connect(
   mapStateToProps, 
   mapDispatchToProps
-)(City);
+)(AddItinerary);

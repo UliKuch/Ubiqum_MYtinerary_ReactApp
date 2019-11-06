@@ -6,6 +6,7 @@ import Cities from './screen/Cities.js';
 import City from './screen/City.js';
 import CreateAccount from './screen/CreateAccount';
 import Login from './screen/Login';
+import AddItinerary from './screen/AddItinerary';
 
 // redux
 import { connect } from "react-redux";
@@ -65,7 +66,8 @@ class App extends React.Component {
               <Route exact path='/' component={Landing} />
               <Route path='/logged_in/:token' component={Landing} />
               <Route exact path='/cities' component={Cities} />
-              <Route path='/cities/:city' component={City} />
+              <Route exact path='/cities/:city' component={City} />
+              <Route path='/cities/:city/add-itinerary' component={AddItinerary} />
               <Route path='/user/create-account' component={CreateAccount} />
               <Route path='/user/login' component={Login} />
             </Switch>
