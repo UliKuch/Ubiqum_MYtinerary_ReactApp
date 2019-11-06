@@ -11,7 +11,9 @@ import {
   Typography,
   Card,
   CardMedia,
-  CardContent
+  CardContent,
+  Tab,
+  Tabs
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 
@@ -26,12 +28,27 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
+function ActivityTab(props) {
+  const activityNumber = props.index;
+  return (
+    <Tab
+      onClick={event => props.handleClick(event, activityNumber)}
+      {...a11yProps(props.index)}
+    />
+  )
+}
 
 function Activity(props) {
   const classes = useStyles();
 
   return (
-    <Card className={classes.card}>
+    <Card
+      className={classes.card}
+      role="tabpanel"
+      hidden={props.value !== props.index}
+      id={`activity-tabpanel-${props.index}`}
+      aria-labelledby={`activity-tab-${props.index}`}
+    >
       <CardMedia
         className={classes.cardImage}
         component="img"
@@ -47,6 +64,13 @@ function Activity(props) {
   )
 }
 
+// supplementary function called by each tab
+function a11yProps(index) {
+  return {
+    id: `activity-tab-${index}`,
+    'aria-controls': `activity-tabpanel-${index}`,
+  };
+}
 
 function Activities(props) {
   // fetch activities
@@ -59,11 +83,49 @@ function Activities(props) {
       window.localStorage.getItem("userToken"))
   }, [props.itineraryName, props.cityName, props.fetchActivities])
 
-  const activities = !props.activities ? null : props.activities.map(activity => {
+  // value defining which tab is to be displayed
+  const [value, setValue] = React.useState(0);
+
+  // store length of activities object in variable outside of use effect hook
+      // to avoid errors because of undefined props.activities values
+  let activitiesLength = !props.activities ? 0 : props.activities.length;
+
+  // set a timer to change which tab is displayed
+  React.useEffect(() => {
+    const timer = setTimeout(() => {
+      value < (activitiesLength - 1)
+      ? 
+      setValue(value + 1)
+      :
+      setValue(0)
+    }, 3000);
+    return () => clearTimeout(timer);
+  }, [activitiesLength, value]);
+
+  // handle click on tab for manual change of tabs
+  const handleClick = (event, newValue) => {
+    console.log("handleChange has been triggered");
+    setValue(newValue);
+  };
+
+  const activityTabs = !props.activities ? null : props.activities.map((activity, index) => {
+    return (
+      <ActivityTab 
+        activity={activity}
+        key={activity._id}
+        index={index}
+        handleClick={(event, newValue) => handleClick(event, newValue)}
+      />
+    )
+  })
+
+  const activities = !props.activities ? null : props.activities.map((activity, index) => {
     return (
       <Activity 
-      activity={activity}
-      key={activity._id}
+        activity={activity}
+        key={activity._id}
+        index={index}
+        value={value}
       />
     )
   })
@@ -73,14 +135,17 @@ function Activities(props) {
       <Typography variant="h5" >
         Activities
       </Typography>
-      <Grid item>
+      <Grid item container justify="center">
         {props.isFetching ? <Loader /> : 
-
-          // TODO: display activities in Carousel
-
-          <Grid container justify="space-around">
-            {activities}
-          </Grid>
+        <div>
+          {activities}
+          <Tabs
+            value={value}
+            aria-label="activities"
+          >
+            {activityTabs}
+          </Tabs>
+        </div>
         }
       </Grid>
     </Grid>
