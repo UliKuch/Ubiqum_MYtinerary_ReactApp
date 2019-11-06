@@ -111,7 +111,7 @@ class Itinerary extends React.Component {
                 variant="caption" 
                 style={styleClassComponent.text}
                 >
-                  {this.props.itin.author}
+                  {this.props.itin.authorUsername || this.props.itin.authorEmail}
                 </Typography>
               </Grid>
             </Grid>
