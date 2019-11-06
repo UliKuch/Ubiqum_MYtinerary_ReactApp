@@ -13,7 +13,8 @@ import {
   CardMedia,
   CardContent,
   Tab,
-  Tabs
+  Tabs,
+  Slide
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 
@@ -25,7 +26,11 @@ const useStyles = makeStyles(theme => ({
   cardImage: {
     width: 200,
     height: 200
-  }
+  },
+  tabs: {
+    minHeight: 10,
+    maxHeight: 10
+  },
 }));
 
 function ActivityTab(props) {
@@ -42,25 +47,37 @@ function Activity(props) {
   const classes = useStyles();
 
   return (
-    <Card
-      className={classes.card}
-      role="tabpanel"
-      hidden={props.value !== props.index}
-      id={`activity-tabpanel-${props.index}`}
-      aria-labelledby={`activity-tab-${props.index}`}
+    <Slide
+      direction="left"
+      // trigger animation if value defining which tab is to be displayed
+          // is equal to index of this activity
+      in={props.value === props.index}
+      mountOnEnter unmountOnExit
+      timeout={{
+        enter: 500,
+        exit: 500,
+      }}
     >
-      <CardMedia
-        className={classes.cardImage}
-        component="img"
-        image={props.activity.img}
-        title={"Image for " + props.activity.title + " activity"}
-      />
-      <CardContent>
-        <Typography variant="h6">
-          {props.activity.title}
-        </Typography>
-      </CardContent>
-    </Card>
+      <Card
+        className={classes.card}
+        role="tabpanel"
+        hidden={props.value !== props.index}
+        id={`activity-tabpanel-${props.index}`}
+        aria-labelledby={`activity-tab-${props.index}`}
+      >
+        <CardMedia
+          className={classes.cardImage}
+          component="img"
+          image={props.activity.img}
+          title={"Image for " + props.activity.title + " activity"}
+        />
+        <CardContent>
+          <Typography variant="h6">
+            {props.activity.title}
+          </Typography>
+        </CardContent>
+      </Card>
+    </Slide>
   )
 }
 
@@ -73,6 +90,8 @@ function a11yProps(index) {
 }
 
 function Activities(props) {
+  const classes = useStyles()
+
   // fetch activities
   // using .call() to avoid a linter error telling to add props to dependencies
     // or destruct props outside of hook. Apparently triggered by using
@@ -93,11 +112,11 @@ function Activities(props) {
   // set a timer to change which tab is displayed
   React.useEffect(() => {
     const timer = setTimeout(() => {
-      value < (activitiesLength - 1)
-      ? 
+      if (value < (activitiesLength - 1)) {
       setValue(value + 1)
-      :
+      } else {
       setValue(0)
+      }
     }, 3000);
     return () => clearTimeout(timer);
   }, [activitiesLength, value]);
@@ -138,8 +157,11 @@ function Activities(props) {
       <Grid item container justify="center">
         {props.isFetching ? <Loader /> : 
         <div>
-          {activities}
+          <Grid container justify="center">
+            {activities}
+          </Grid>
           <Tabs
+            className={classes.tabs}
             value={value}
             aria-label="activities"
           >
