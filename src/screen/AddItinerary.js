@@ -6,13 +6,19 @@ import Navbar from '../component/Navbar'
 // redux
 import { connect } from "react-redux";
 import { findCity } from "../store/actions/cityActions";
+import { postItinerary } from "../store/actions/itineraryActions";
 
 // Material-UI
 import {
   Box,
-  Typography
+  Typography,
+  TextField,
+  Grid,
+  Avatar,
+  Button
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
+
 
 // styles instead of makeStyles in order to use props (cityImage)
 const styles = (cityImage) => ({
@@ -37,9 +43,192 @@ const useStyles = makeStyles(theme => ({
     width: "100%",
     marginRight: theme.spacing(3),
     marginLeft: theme.spacing(3),
-  }
+  },
+  textFieldTitleText: {
+    ...theme.typography.h5
+  },
+  textField: {
+    margin: theme.spacing(1),
+    marginLeft: theme.spacing(3),
+    marginRight: theme.spacing(3),
+    maxWidth: 300
+  },
+  container: {
+    width: "100%"
+  },
+  avatar: {
+    height: 60,
+    width: 60
+  },
+  marginRight: {
+    marginRight: 8
+  },
+  itinGridContainer: {
+    overflow: "hidden",
+  },
+  textUsernameWrap: {
+    maxWidth: "100%"
+  },
+  textUsername: {
+    display: "block"
+  },
+  form: {
+    padding: 8
+  },
+  submitButton: {
+    margin: theme.spacing(1),
+    marginLeft: theme.spacing(3),
+    marginRight: theme.spacing(3),
+    maxWidth: 300
+  },
 }));
 
+
+function ItineraryForm(props) {
+  const classes = useStyles()
+
+  const [values, setValues] = React.useState({
+    // set initial values to avoid uncontrolled components
+    title: "",
+    duration: "",
+    price: "",
+    hashtags: ""
+  });
+  
+  const handleChangeTextField = name => event => {
+    setValues({ ...values, [name]: event.target.value });
+  };
+
+  return (
+    <form
+      className={classes.form}
+      onSubmit={event => props.handleSubmit(event, values)}
+    >
+      <Grid
+        container
+        className={classes.itinGridContainer}
+        spacing={2}
+      >
+
+        <Grid
+          item container
+          id="userinfo"
+          xs={3}
+          alignItems="center"
+          direction="column"
+          className={classes.itinGridContainer}
+        >
+
+          <Avatar
+            src={props.user.userImage}
+            alt={"Profile picture of " + (props.user.username || props.user.userEmail)}
+            imgProps={{ onError: (e) => { e.target.src = "/images/userIcon.png" } }}
+            className={classes.avatar}
+          />
+
+          <Grid
+            item
+            className={classes.textUsernameWrap}
+          >
+            <Typography
+            noWrap
+            variant="caption" 
+            className={classes.textUsername}
+            >
+              {props.user.username || props.user.userEmail}
+            </Typography>
+          </Grid>
+
+        </Grid>
+
+        <Grid
+          item container
+          id="itinDescription"
+          xs={9}
+          direction="column"
+        >
+
+          <Grid item container>
+            <TextField
+              required
+              id="Title"
+              label="Title"
+              placeholder="Enter Title"
+              value={values.title}
+              onChange={handleChangeTextField("title")}
+              className={classes.textField}
+              InputProps={{
+                classes: {
+                  input: classes.textFieldTitleText,
+                },
+              }}
+            />
+          </Grid>
+
+          <Grid container item>
+            <TextField
+              required
+              id="Duration"
+              label="Duration"
+              placeholder="Enter duration in hours"
+              helperText="Enter number of hours it takes to complete the itinerary."
+              value={values.duration}
+              onChange={handleChangeTextField("duration")}
+              className={classes.textField}
+            />
+          </Grid>
+
+          <Grid container item>
+            <TextField
+              required
+              id="Price"
+              label="Price"
+              placeholder="Enter price on a scale from 1 to 3"
+              helperText="Enter a number between 1 and 3. Will be displayed as $."
+              value={values.price}
+              onChange={handleChangeTextField("price")}
+              className={classes.textField}
+            />
+          </Grid>
+
+
+          <Grid item container direction="column">
+            <TextField
+              required
+              id="Hashtags"
+              label="Hashtags"
+              placeholder="Enter Hashtags"
+              helperText="Enter hashtags separated by spaces, without the hashtag symbol (#)."
+              value={values.hashtags}
+              onChange={handleChangeTextField("hashtags")}
+              className={classes.textField}
+            />
+          </Grid>
+
+          <Grid
+            container item
+            id="addActivities"
+
+              // TODO: Add activities
+
+          >
+          </Grid>
+                    
+          <Button
+            variant="contained"
+            color="secondary"
+            className={classes.submitButton}
+            type="submit"          
+          >
+            Submit
+          </Button>
+
+
+        </Grid>
+      </Grid>
+    </form>
+  )
+}
 
 function CityLogo(props) {
   const city = props.city;
@@ -65,15 +254,27 @@ function CityLogo(props) {
 }
 
 function AddItinerary(props) {
-  const cityNamefromUrl = props.match.params.city;
+  const cityNameFromUrl = props.match.params.city;
+  const token = window.localStorage.getItem("userToken")
 
   // fetch city info
   React.useEffect(() => {  
-    props.findCity.call(null, cityNamefromUrl,
-      window.localStorage.getItem("userToken"))
-  }, [cityNamefromUrl, props.findCity])
+    props.findCity.call(null, cityNameFromUrl, token)
+  }, [cityNameFromUrl, props.findCity, token])
   
+  const handleSubmit = async (event, itin) => {
+    // prevents page reload
+    event.preventDefault();
 
+    // POST itinerary
+    const response = await props.postItinerary(itin, cityNameFromUrl, token);
+
+    // display response
+    alert(response.data);
+
+    // route to city page
+    props.history.push(`/cities/${cityNameFromUrl}`);
+  }
 
   return (
     <div>
@@ -87,7 +288,10 @@ function AddItinerary(props) {
           city={props.city}
         />
       }
-
+      <ItineraryForm
+        user={props.user}
+        handleSubmit={(event, itin) => handleSubmit(event, itin)}
+      />
       <Footer />
     </div>
   )
@@ -96,13 +300,16 @@ function AddItinerary(props) {
 function mapStateToProps(state) {
   return {
     city: state.findCity.city,
-    isFetching: state.findCity.isFetching
+    isFetching: state.findCity.isFetching,
+    user: state.user,
+    isPostingItinerary: state.postItinerary.isPosting
   }
 };
 
 const mapDispatchToProps = dispatch => {
   return {
-    findCity: (city, token) => dispatch(findCity(city, token))
+    findCity: (city, token) => dispatch(findCity(city, token)),
+    postItinerary: (itin, cityName, token) => dispatch(postItinerary(itin, cityName, token))
   }
 };
 

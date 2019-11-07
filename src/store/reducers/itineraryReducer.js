@@ -13,7 +13,10 @@ import {
   EDIT_COMMENT_SUCCESS,
   DELETE_COMMENT_REQUEST,
   DELETE_COMMENT_FAILURE,
-  DELETE_COMMENT_SUCCESS
+  DELETE_COMMENT_SUCCESS,
+  POST_ITINERARY_SUCCESS,
+  POST_ITINERARY_REQUEST,
+  POST_ITINERARY_FAILURE
 } from "../actions/itineraryActions"
 
 const initialState = {
@@ -138,4 +141,29 @@ function itineraryReducer(state = initialState, action) {
   }
 }
 
-export default itineraryReducer
+const postItineraryInitialState = {
+  isPosting: false
+}
+
+// POST itinerary
+function postItineraryReducer(state = postItineraryInitialState, action) {
+  switch (action.type) {
+    case POST_ITINERARY_REQUEST:
+      return Object.assign({}, state, {
+        isPosting: true
+      })
+    case POST_ITINERARY_FAILURE:
+      return Object.assign({}, state, {
+        isPosting: false
+      })
+    case POST_ITINERARY_SUCCESS:
+      return Object.assign({}, state, {
+        isPosting: false
+      })  
+    default:
+      return state
+  }
+
+}
+
+export {itineraryReducer, postItineraryReducer}

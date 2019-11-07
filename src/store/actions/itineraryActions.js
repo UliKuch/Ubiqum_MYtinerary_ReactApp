@@ -21,6 +21,9 @@ export const DELETE_COMMENT_REQUEST = "DELETE_COMMENT_REQUEST";
 export const DELETE_COMMENT_FAILURE = "DELETE_COMMENT_FAILURE";
 export const DELETE_COMMENT_SUCCESS = "DELETE_COMMENT_SUCCESS";
 
+export const POST_ITINERARY_REQUEST = "POST_ITINERARY_REQUEST";
+export const POST_ITINERARY_FAILURE = "POST_ITINERARY_FAILURE";
+export const POST_ITINERARY_SUCCESS = "POST_ITINERARY_SUCCESS";
 
 // ----- action creators ------
 
@@ -120,6 +123,23 @@ export function deleteCommentSuccess(itin) {
   return {
     type: DELETE_COMMENT_SUCCESS,
     itin
+  }
+}
+
+// POST itinerary
+export function postItineraryRequest() {
+  return {
+    type: POST_ITINERARY_REQUEST
+  }
+}
+export function postItineraryFailure() {
+  return {
+    type: POST_ITINERARY_FAILURE
+  }
+}
+export function postItinerarySuccess() {
+  return {
+    type: POST_ITINERARY_SUCCESS
   }
 }
 
@@ -252,6 +272,29 @@ export function deleteComment(commentId, itin, cityName, token) {
     } catch (error) {
       console.log(error);
       return dispatch(deleteCommentFailure(itin))
+    }
+  }
+}
+
+// POST itinerary
+export function postItinerary(itin, cityName, token) {
+ 
+  return async function(dispatch) {
+    dispatch(postItineraryRequest())
+
+    try {
+      const response = await axios.post(
+        `http://localhost:5000/cities/${cityName}/add-itinerary`,
+        itin,
+        {headers: {
+            "Authorization": "Bearer " + token,
+        }}
+      )
+      dispatch(postItinerarySuccess())
+      return response
+    } catch (error) {
+      console.log(error);
+      return dispatch(postItineraryFailure())
     }
   }
 }
