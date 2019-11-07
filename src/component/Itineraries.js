@@ -99,7 +99,10 @@ class Itinerary extends React.Component {
             >
               <Avatar
                 src={this.props.itin.profilePicture}
-                alt={"Profile picture of " + this.props.itin.author}
+                alt={"Profile picture of " + (this.props.itin.authorUsername || this.props.itin.authorEmail)}
+                // display substitute image if userImage path from db does not work
+                // (there does not seem to be a way to display material-ui icon instead)
+                imgProps={{ onError: (e) => { e.target.src = "/images/userIcon.png" } }}
                 style={styleClassComponent.avatar}
               />
               <Grid

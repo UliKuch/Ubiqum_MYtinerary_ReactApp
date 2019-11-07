@@ -20,23 +20,33 @@ import { makeStyles } from '@material-ui/core/styles';
 
 const useStyles = makeStyles(theme => ({
   card: {
-    maxWidth: 220,
+    width: 200,
     margin: theme.spacing(1)
   },
   cardImage: {
     width: 200,
     height: 200
   },
+  tab: {
+    minHeight: 10,
+    maxHeight: 10,
+    minWidth: 10
+  },
   tabs: {
     minHeight: 10,
-    maxHeight: 10
+    maxHeight: 10,
+    minWidth: 10
   },
 }));
 
 function ActivityTab(props) {
+  const classes = useStyles();
+
   const activityNumber = props.index;
+
   return (
     <Tab
+      className={classes.tab}
       onClick={event => props.handleClick(event, activityNumber)}
       {...a11yProps(props.index)}
     />
@@ -160,13 +170,15 @@ function Activities(props) {
           <Grid container justify="center">
             {activities}
           </Grid>
-          <Tabs
-            className={classes.tabs}
-            value={value}
-            aria-label="activities"
-          >
-            {activityTabs}
-          </Tabs>
+          <Grid container justify="center">
+            <Tabs
+              className={classes.tabs}
+              value={value}
+              aria-label="activities"
+            >
+              {activityTabs}
+            </Tabs>
+          </Grid>
         </div>
         }
       </Grid>

@@ -24,7 +24,7 @@ const useStyles = makeStyles(theme => ({
     backgroundPosition: "center",
     backgroundRepeat: "no-repeat",
     backgroundSize: "cover",
-    height: 100,
+    height: 300,
     display: "flex",
     alignItems: "center",
     justifyContent: "center",

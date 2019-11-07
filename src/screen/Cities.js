@@ -41,6 +41,7 @@ const useStyles = makeStyles(theme => ({
     color: "black",
     textAlign: "center",
     marginTop: theme.spacing(1),
+    height: 80,
     "&:hover": {
       textDecoration: "none",
       color: "black",
@@ -48,6 +49,7 @@ const useStyles = makeStyles(theme => ({
   },
   listItemText: {
     backgroundColor: theme.palette.background.paper,
+    opacity: "0.6",
     marginRight: theme.spacing(3),
     marginLeft: theme.spacing(3),
     overflow: "hidden"
@@ -67,6 +69,9 @@ function City(props) {
       <ListItemText
         primary={props.city.name}
         className={classes.listItemText}
+        primaryTypographyProps={{
+          variant: "h6"
+        }}
       />
     </ListItem>
   )
