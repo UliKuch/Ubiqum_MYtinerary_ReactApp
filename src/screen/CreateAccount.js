@@ -137,10 +137,19 @@ function CreateAccountForm(props) {
       className={classes.formContainer}
       onSubmit={(event) => props.handleSubmit(event, values)}
     >
+    {
+      values.userImage
+      ?
+      <Avatar
+        src={values.userImage}
+        imgProps={{ onError: (e) => { e.target.src = "/images/cross.png" } }}
+        className={classes.avatar}
+      />
+      :
       <Avatar className={classes.avatar}>
         <AccountCircle style={{ fontSize: 300 }}/>
       </Avatar>
-
+    }
       <TextField
         required
         id="UserImage"
@@ -281,8 +290,8 @@ class CreateAccount extends React.Component {
     // add user to db and, if successful, log user in
     await this.props.postUser(user)
 
-    // route to landing page after creating & login
-    this.props.history.push("/")
+    // reload after login (logegd in users will be rerouted to landing page)
+    window.location.reload();
   }
 
   render() {
