@@ -1,20 +1,28 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 
-import Navbar from '../component/Navbar'
-import Footer from '../component/Footer'
-import Logo from '../component/Logo'
-
-// Carousel
-import Carousel from "react-multi-carousel";
-import "react-multi-carousel/lib/styles.css";
+import Navbar from '../component/Navbar';
+import Footer from '../component/Footer';
+import Logo from '../component/Logo';
+import Loader from '../component/Loader';
 
 // redux
 import { connect } from "react-redux";
 import { fetchCities } from "../store/actions/cityActions";
 
 // Material-UI
-import { Container, Typography, Box, CardMedia, Card, CardContent } from '@material-ui/core';
+import {
+  Container,
+  Typography,
+  Box,
+  CardMedia,
+  Card,
+  CardContent,
+  Grid,
+  Tabs,
+  Tab,
+  Slide
+} from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 
 // decoding jwt
@@ -35,140 +43,226 @@ const useStyles = makeStyles(theme => ({
   },
   cityImage: {
     height: 200,
-    width: 200
-  }
+    width: 200,
+    // if screen size is smaller than 600px (sm), change height & width
+    [theme.breakpoints.down('sm')]: {
+      height: 100,
+      width: 100
+    },
+   },
+  card: {
+    height: 300,
+    maxWidth: 200,
+    margin: theme.spacing(1),
+    // if screen size is smaller than 600px (sm), change height & width
+    [theme.breakpoints.down('sm')]: {
+      height: 150,
+      maxWidth: 100,
+      margin: theme.spacing(1),
+    },
+    "&:hover": {
+      cursor: "pointer",
+    }
+  },
+  cardsContainer: {
+  },
+  cardsGridContainer: {
+    height: 700,
+    maxWidth: 500,
+    // if screen size is smaller than 600px (sm), change height & width
+    [theme.breakpoints.down('sm')]: {
+      height: 400,
+      maxWidth: 300
+    },
+  },
+  tab: {
+    minHeight: 10,
+    maxHeight: 10,
+    minWidth: 10
+  },
+  tabs: {
+    minHeight: 10,
+    maxHeight: 10,
+    minWidth: 10
+  }, 
 }));
 
-// for carousel
-const responsive = {
-  desktop: {
-    breakpoint: { max: 3000, min: 1024 },
-    items: 3,
-    slidesToSlide: 3, // optional, default to 1.
-  },
-  tablet: {
-    breakpoint: { max: 1024, min: 464 },
-    items: 2,
-    slidesToSlide: 2, // optional, default to 1.
-  },
-  mobile: {
-    breakpoint: { max: 464, min: 0 },
-    items: 1,
-    slidesToSlide: 1, // optional, default to 1.
-  },
-};
 
-function LandingCarouselImage(props) {
+function CitiesTab(props) {
   const classes = useStyles();
 
-  return(
-    <Box
-      display="flex"
-      justifyContent="center"
-      component={Link}
-      to={`/cities/${props.city.name}`}
+  const citiesNumber = props.index;
 
-    >
-      <Card>
+  return (
+    <Tab
+      className={classes.tab}
+      onClick={event => props.handleClick(event, citiesNumber)}
+      {...a11yProps(props.index)}
+    />
+  )
+}
+
+
+// supplementary function called by each tab
+function a11yProps(index) {
+  return {
+    id: `cities-tab-${index}`,
+    'aria-controls': `cities-tabpanel-${index}`,
+  };
+}
+
+
+function CitiesCards(props) {
+  const classes = useStyles();
+
+  let history = useHistory();
+
+  const cards = props.cities.map(city => {
+    return (
+      <Card
+        key={city.name}
+        className={classes.card}
+        onClick={() => history.push(`/cities/${city.name}`)}
+      >
         <CardMedia
-          image={props.city.img}
+          image={city.img}
           className={classes.cityImage}
+          component="img"
+          title={"Image for " + city.name}
         />
         <CardContent>
-            <Typography gutterBottom variant="h5" component="h2">
-              {props.city.name}
+            <Typography
+              gutterBottom
+              variant="h5"
+              component="h2"
+            >
+              {city.name}
             </Typography>
         </CardContent>
       </Card>
-    </Box>
+    )
+  })
+
+  return(
+    <Slide
+      direction="left"
+      // trigger animation if value defining which tab is to be displayed
+          // is equal to index of this activity
+      in={props.value === props.index}
+      mountOnEnter unmountOnExit
+      timeout={{
+        enter: 500,
+        exit: 500,
+      }}
+    >
+      <Box
+        className={classes.cardsContainer}
+        role="tabpanel"
+        hidden={props.value !== props.index}
+        id={`cities-tabpanel-${props.index}`}
+        aria-labelledby={`cities-tab-${props.index}`}
+      >
+        <Grid
+          container
+          justify="center"
+          className={classes.cardsGridContainer}
+        >
+          {cards}
+        </Grid>
+      </Box>
+    </Slide>
   )
 }
 
 
 function LandingCarousel(props) {
-  const images = props.cities.map(city => {
-    return (<LandingCarouselImage 
-      city={city}
-      key={city.name}
-      /> )
+  const classes = useStyles();
+
+  const citiesSubarrays = props.citiesSubarrays;
+
+  // value defining which tab is to be displayed
+  const [value, setValue] = React.useState(0);
+
+  // store length of citiesSubarrays object in variable outside of use effect hook
+  let citiesSubarraysLength = !props.citiesSubarrays ? 0 : citiesSubarrays.length;
+
+  // set a timer to change which tab is displayed
+  React.useEffect(() => {
+    const timer = setTimeout(() => {
+      if (value < (citiesSubarraysLength - 1)) {
+      setValue(value + 1)
+      } else {
+      setValue(0)
+      }
+    }, 3000);
+    return () => clearTimeout(timer);
+  }, [citiesSubarraysLength, value]);  
+  
+  // handle click on tab for manual change of tabs
+  const handleClick = (event, newValue) => {
+    setValue(newValue);
+  };
+
+  const cards = !props.citiesSubarrays ? null : citiesSubarrays.map((cities, index) => {
+    return (
+      <CitiesCards
+        cities={cities}
+        key={cities[0].name}
+        index={index}
+        value={value}
+      />
+    )
+  })
+
+  const citiesTabs = !props.citiesSubarrays ? null : citiesSubarrays.map((cities, index) => {
+    return (
+      <CitiesTab 
+        cities={cities}
+        key={cities[0].name}
+        index={index}
+        handleClick={handleClick}
+      />
+    )
   })
 
   return (
-    <Carousel
-      arrows
-      swipeable
-      draggable
-      showDots={true}
-      renderButtonGroupOutside={true}
-      responsive={responsive}
-      ssr={true} // means to render carousel on server-side.
-      infinite={true}
-      autoPlay
-      autoPlaySpeed={2000}
-      keyBoardControl={true}
-      transitionDuration={500}
-      containerClass="carousel-container"
-      // removeArrowOnDeviceType={["tablet", "mobile"]}
-      dotListClass="custom-dot-list-style"
-      itemClass="carousel-item-padding-40-px"
-    >
-      {images}
-    </Carousel>
+    <Grid container justify="center">
+      {props.isFetching ? <Loader /> :
+        <div>
+          <Grid container justify="center">
+            {cards}
+          </Grid>
+          <Grid container justify="center">
+            <Tabs
+              className={classes.tabs}
+              value={value}
+              aria-label="cities"
+            >
+              {citiesTabs}
+            </Tabs>
+          </Grid>
+        </div>
+      }
+    </Grid>
   )
 }
 
 
-function LandingMain(props) {
+function Landing(props) {
   const classes = useStyles();
 
-  return (
-    <Container>
-      <Typography
-      align="center"
-      className={classes.text}
-      >
-        Find your perfect trip, designed by insiders who know 
-            and love their cities.
-      </Typography>
-      <Box
-          className={classes.arrowImageContainer}
-        >
-        <Box 
-          component={Link}
-          to="/cities"
-        >
-          <img
-            className={classes.img}
-            src="/images/circled-right-2.png"
-            alt="Clickable button displaying an arrow."
-          />
-        </Box>
-      </Box>
-      <Typography
-      align="center"
-      className={classes.text}
-      >
-        Popular MYtineraries:
-      </Typography>
-      <LandingCarousel
-        cities={props.citiesWithImages}
-      />
-    </Container>
-  )
-}
+  const token = window.localStorage.getItem("userToken");
 
-
-class Landing extends React.Component {
-  componentDidMount() {
+  React.useEffect(() => {
     // if token in url (google login), save token in local storage
-        // and reroute to landing page w/o token in url
-    if (this.props.match.params.token) {
+      // and reroute to landing page w/o token in url
+    if (props.match.params.token) {
       // *1000 because token stores time in seconds, but js uses milliseconds
-      const tokenCreated = jwtDecode(this.props.match.params.token).iat * 1000;
+      const tokenCreated = jwtDecode(props.match.params.token).iat * 1000;
 
       // only add token if it is not older than 30 seconds
       if ((Date.now() - tokenCreated) < 30000) {
-        window.localStorage.setItem("userToken", this.props.match.params.token);
+        window.localStorage.setItem("userToken", props.match.params.token);
         console.log("Token has been added to local storage");
         console.log("Time elapsed after token creation (in milliseconds): " + 
             (Date.now() - tokenCreated));
@@ -178,35 +272,69 @@ class Landing extends React.Component {
             (Date.now() - tokenCreated));
       }
 
-      this.props.history.push("/")
+      props.history.push("/")
     };
 
-    this.props.fetchCities(window.localStorage.getItem("userToken"));
-  }
+    props.fetchCities.call(null, token);
+  }, [props.match.params.token, props.history, token, props.fetchCities])
 
-  render() {
-    // max. 12 cities with images
-    let imageCounter = 0;
-    const citiesWithImages = this.props.cities.filter(city => {
-      if (city.img) {
-        imageCounter++;
-      }
-      return city.img && (imageCounter < 13)
-    })
+  // max. 12 cities with images
+  let imageCounter = 0;
+  const citiesWithImages = props.cities.filter(city => {
+    if (city.img) {
+      imageCounter++;
+    }
+    return city.img && (imageCounter < 13)
+  })
+  
+  // split cities array in subarrays of 4 cities each
+  let citiesSubarrays = [];
+  while (citiesWithImages.length > 0) {
+    citiesSubarrays.push(citiesWithImages.splice(0, 4))
+  };
 
-    return (
+  return (
     <div>
       <Navbar
         selectedMenuItem="Home"
       />
       <Logo />
-      <LandingMain
-        citiesWithImages={citiesWithImages}
-      />
+        <Container>
+        <Typography
+        align="center"
+        className={classes.text}
+        >
+          Find your perfect trip, designed by insiders who know 
+              and love their cities.
+        </Typography>
+        <Box
+            className={classes.arrowImageContainer}
+          >
+          <Box 
+            component={Link}
+            to="/cities"
+          >
+            <img
+              className={classes.img}
+              src="/images/circled-right-2.png"
+              alt="Clickable button displaying an arrow."
+            />
+          </Box>
+        </Box>
+        <Typography
+        align="center"
+        className={classes.text}
+        >
+          Popular MYtineraries:
+        </Typography>
+        <LandingCarousel
+          citiesSubarrays={citiesSubarrays}
+          isFetching={props.isFetching}
+        />
+      </Container>
       <Footer />
     </div>
-    )
-  }
+  )
 }
 
 function mapStateToProps(state) {
