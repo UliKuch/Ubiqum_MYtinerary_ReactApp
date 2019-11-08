@@ -15,7 +15,8 @@ import {
   TextField,
   Grid,
   Avatar,
-  Button
+  Button,
+  MenuItem
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 
@@ -52,6 +53,9 @@ const useStyles = makeStyles(theme => ({
     marginLeft: theme.spacing(3),
     marginRight: theme.spacing(3),
     maxWidth: 300
+  },
+  priceMenu: {
+    maxWidth: 300,
   },
   container: {
     width: "100%"
@@ -91,13 +95,29 @@ function ItineraryForm(props) {
     // set initial values to avoid uncontrolled components
     title: "",
     duration: "",
-    price: "",
+    price: 1,
     hashtags: ""
   });
   
   const handleChangeTextField = name => event => {
     setValues({ ...values, [name]: event.target.value });
   };
+
+  // for price select element
+  const prices = [
+    {
+      value: '1',
+      label: '$',
+    },
+    {
+      value: '2',
+      label: '$$',
+    },
+    {
+      value: '3',
+      label: '$$$',
+    },
+  ]
 
   return (
     <form
@@ -170,11 +190,15 @@ function ItineraryForm(props) {
               required
               id="Duration"
               label="Duration"
-              placeholder="Enter duration in hours"
-              helperText="Enter number of hours it takes to complete the itinerary."
+              helperText="Enter duration in hours"
               value={values.duration}
               onChange={handleChangeTextField("duration")}
               className={classes.textField}
+              type="number"
+              inputProps={{
+                min: 1,
+                max: 168
+              }}
             />
           </Grid>
 
@@ -183,14 +207,25 @@ function ItineraryForm(props) {
               required
               id="Price"
               label="Price"
-              placeholder="Enter price on a scale from 1 to 3"
-              helperText="Enter a number between 1 and 3. Will be displayed as $."
+              helperText="Select a value"
               value={values.price}
               onChange={handleChangeTextField("price")}
               className={classes.textField}
-            />
+              type="number"
+              select
+              SelectProps={{
+                MenuProps: {
+                  className: classes.priceMenu,
+                },
+              }}
+            >
+              {prices.map(option => (
+                <MenuItem key={option.value} value={option.value}>
+                  {option.label}
+                </MenuItem>
+              ))}
+            </TextField>
           </Grid>
-
 
           <Grid item container direction="column">
             <TextField
@@ -267,10 +302,7 @@ function AddItinerary(props) {
     event.preventDefault();
 
     // POST itinerary
-    const response = await props.postItinerary(itin, cityNameFromUrl, token);
-
-    // display response
-    alert(response.data);
+    await props.postItinerary(itin, cityNameFromUrl, token);
 
     // route to city page
     props.history.push(`/cities/${cityNameFromUrl}`);
