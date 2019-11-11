@@ -156,6 +156,13 @@ function Navbar(props) {
               >
                 Cities
               </MenuItem>
+              <MenuItem
+                component={Link}
+                to="/imprint"
+                selected={selectedMenuItem === "Imprint"}
+              >
+                Imprint
+              </MenuItem>
             </DropDownMenu>
           </Box>
         </Toolbar>

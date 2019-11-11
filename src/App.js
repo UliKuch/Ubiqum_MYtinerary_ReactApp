@@ -7,6 +7,7 @@ import City from './screen/City.js';
 import CreateAccount from './screen/CreateAccount';
 import Login from './screen/Login';
 import AddItinerary from './screen/AddItinerary';
+import Imprint from './screen/Imprint';
 
 // redux
 import { connect } from "react-redux";
@@ -70,6 +71,7 @@ class App extends React.Component {
               <Route path='/cities/:city/add-itinerary' component={AddItinerary} />
               <Route path='/user/create-account' component={CreateAccount} />
               <Route path='/user/login' component={Login} />
+              <Route path='/imprint' component={Imprint} />
             </Switch>
           </div>
         </BrowserRouter>  
