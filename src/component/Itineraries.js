@@ -6,13 +6,15 @@ import Comments from './Comments'
 // redux
 import { connect } from "react-redux";
 import { fetchItineraries } from "../store/actions/itineraryActions";
+import { postActivity } from "../store/actions/activityActions";
 import { getFavitin, postFavitin } from "../store/actions/userActions";
 
 // Material-UI
-import { ExpansionPanel, ExpansionPanelSummary, ExpansionPanelDetails, Grid, Typography, Avatar } from '@material-ui/core';
+import { ExpansionPanel, ExpansionPanelSummary, ExpansionPanelDetails, Grid, Typography, Avatar, Button, TextField } from '@material-ui/core';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import StarBorderIcon from '@material-ui/icons/StarBorder';
 import StarIcon from '@material-ui/icons/Star';
+import { makeStyles } from '@material-ui/core/styles';
 
 const styleClassComponent = {
   container: {
@@ -46,6 +48,89 @@ const styleClassComponent = {
   }
 }
 
+const useStyles = makeStyles(theme => ({
+  addActivityButton: {
+    maxWidth: 300,
+    margin: theme.spacing(2)
+  },
+  submitActivityButton: {
+    maxWidth: 300,
+    margin: theme.spacing(2)
+  },
+}))
+
+function AddActivity(props) {
+  const [expanded, setExpanded] = React.useState(false);
+
+  const [values, setValues] = React.useState({
+    title: "",
+    img: ""
+  });
+
+  const classes = useStyles()
+
+  const handleClick = () => {
+    setExpanded(true);
+  };
+
+  const handleChangeTextField = name => event => {
+    setValues({ ...values, [name]: event.target.value})
+  }
+
+  return (
+    <form>
+      <Button
+        variant="contained"
+        color="secondary"
+        type="button"
+        className={classes.addActivityButton}
+        disabled={expanded}
+        onClick={() => handleClick()}
+      >
+        Add Activity
+      </Button>
+      {expanded &&
+        <>
+          <TextField
+            required
+            label="Activity Title"
+            placeholder="Enter title of your activity"
+            value={values.title}
+            onChange={handleChangeTextField("title")}
+          />
+          <TextField
+          required
+            label="Activity Image"
+            placeholder="Enter url to image"
+            value={values.img}
+            onChange={handleChangeTextField("img")}
+          
+          />
+          <Button
+            variant="contained"
+            color="secondary"
+            type="submit"
+            className={classes.submitActivityButton}
+            disabled={!expanded}
+            onClick={event => {
+              setExpanded(false);
+              props.handleSubmit(event, values);
+              setValues({
+                title: "",
+                img: ""
+              })
+            }}
+          >
+            Submit Activity
+          </Button>
+        </>
+      }
+    </form>
+  )
+
+}
+
+
 class Itinerary extends React.Component {
   constructor(props) {
     super(props);
@@ -69,7 +154,17 @@ class Itinerary extends React.Component {
   }
 
   render() {
-  
+    const handleSubmit = async (event, activity) => {
+      event.preventDefault();
+
+      const token = window.localStorage.getItem("userToken");
+
+      await this.props.postActivity(this.props.cityName, this.props.itin.title, activity, token);
+
+      console.log("Handle Submit");
+    }
+
+
     return (
       <ExpansionPanel
         id="expPanel"
@@ -201,6 +296,14 @@ class Itinerary extends React.Component {
                 cityName={this.props.itin.city}
                 itineraryName={this.props.itin.title}
               />
+
+              {
+                (this.props.itin.authorId === this.props.user.userId) 
+                &&
+                <AddActivity
+                  handleSubmit={handleSubmit}
+                />
+              }
               <Comments
                 cityName={this.props.itin.city}
                 itin={this.props.itin.title}
@@ -243,10 +346,14 @@ class Itineraries extends React.Component {
     const itineraries = this.props.itineraries.map(itin => {
       return (
         <Itinerary 
+          cityName={this.props.cityName}
           itin={itin}
           key={itin._id}
-          favorite={this.props.favoriteItineraries.includes(itin.title)}
+          user={this.props.user}
+          favorite={this.props.user.favoriteItineraries.includes(itin.title)}
           onClick={(event, itinTitle) => this.handleFavoriting(event, itinTitle)}
+          postActivity={(cityName, itineraryName, activity, token) =>
+              this.props.postActivity(cityName, itineraryName, activity, token)}
         />
       )
     })
@@ -266,7 +373,7 @@ function mapStateToProps(state, ownProps) {
     itineraries: state.itinerary.itineraries,
     isFetching: state.itinerary.isFetching,
     cityName,
-    favoriteItineraries: state.user.favoriteItineraries
+    user: state.user
   }
 };
 
@@ -275,6 +382,7 @@ const mapDispatchToProps = dispatch => {
     fetchItineraries: (cityName, token) => dispatch(fetchItineraries(cityName, token)),
     getFavitin: token => dispatch(getFavitin(token)),
     postFavitin: (itin, token) => dispatch(postFavitin(itin, token)),
+    postActivity: (cityName, itineraryName, activity, token) => dispatch(postActivity(cityName, itineraryName, activity, token))
   }
 };
 
