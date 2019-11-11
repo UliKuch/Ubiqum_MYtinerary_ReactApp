@@ -30,7 +30,7 @@ const theme = createMuiTheme({
   },
 });
 
-class App extends React.Component {
+export class App extends React.Component {
   componentDidMount() {
     // check if token exists
     // if it exists but is not valid: log user out

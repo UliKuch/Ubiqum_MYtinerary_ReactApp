@@ -258,7 +258,7 @@ function LandingCarousel(props) {
 }
 
 
-function Landing(props) {
+export function Landing(props) {
   const classes = useStyles();
 
   const token = window.localStorage.getItem("userToken");
@@ -309,7 +309,7 @@ function Landing(props) {
         selectedMenuItem="Home"
       />
       <Logo />
-        <Container>
+      <Container>
         <Typography
         align="center"
         className={classes.text}
@@ -318,8 +318,8 @@ function Landing(props) {
               and love their cities.
         </Typography>
         <Box
-            className={classes.arrowImageContainer}
-          >
+          className={classes.arrowImageContainer}
+        >
           <Box 
             component={Link}
             to="/cities"
@@ -332,8 +332,8 @@ function Landing(props) {
           </Box>
         </Box>
         <Typography
-        align="center"
-        className={classes.text}
+          align="center"
+          className={classes.text}
         >
           Popular MYtineraries:
         </Typography>

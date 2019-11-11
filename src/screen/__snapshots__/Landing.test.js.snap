@@ -2,9 +2,55 @@
 
 exports[`Landing component snapshot 1`] = `
 <div>
-  <Navbar />
+  <Connect(Navbar)
+    selectedMenuItem="Home"
+  />
   <Logo />
-  <LandingMain />
+  <WithStyles(ForwardRef(Container))>
+    <WithStyles(ForwardRef(Typography))
+      align="center"
+      className="makeStyles-text-3"
+    >
+      Find your perfect trip, designed by insiders who know and love their cities.
+    </WithStyles(ForwardRef(Typography))>
+    <Styled(MuiBox)
+      className="makeStyles-arrowImageContainer-2"
+    >
+      <Styled(MuiBox)
+        component={
+          Object {
+            "$$typeof": Symbol(react.forward_ref),
+            "displayName": "Link",
+            "propTypes": Object {
+              "innerRef": [Function],
+              "onClick": [Function],
+              "replace": [Function],
+              "target": [Function],
+              "to": [Function],
+            },
+            "render": [Function],
+          }
+        }
+        to="/cities"
+      >
+        <img
+          alt="Clickable button displaying an arrow."
+          className="makeStyles-img-1"
+          src="/images/circled-right-2.png"
+        />
+      </Styled(MuiBox)>
+    </Styled(MuiBox)>
+    <WithStyles(ForwardRef(Typography))
+      align="center"
+      className="makeStyles-text-3"
+    >
+      Popular MYtineraries:
+    </WithStyles(ForwardRef(Typography))>
+    <LandingCarousel
+      citiesSubarrays={Array []}
+      isFetching={false}
+    />
+  </WithStyles(ForwardRef(Container))>
   <Footer />
 </div>
 `;
