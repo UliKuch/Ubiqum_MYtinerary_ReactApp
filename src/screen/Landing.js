@@ -44,8 +44,8 @@ const useStyles = makeStyles(theme => ({
   cityImage: {
     height: 200,
     width: 200,
-    // if screen size is smaller than 600px (sm), change height & width
-    [theme.breakpoints.down('sm')]: {
+    // if screen size is smaller than 600px (xs), change height & width
+    [theme.breakpoints.down('xs')]: {
       height: 100,
       width: 100
     },
@@ -54,8 +54,8 @@ const useStyles = makeStyles(theme => ({
     height: 300,
     maxWidth: 200,
     margin: theme.spacing(1),
-    // if screen size is smaller than 600px (sm), change height & width
-    [theme.breakpoints.down('sm')]: {
+    // if screen size is smaller than 600px (xs), change height & width
+    [theme.breakpoints.down('xs')]: {
       height: 150,
       maxWidth: 100,
       margin: theme.spacing(1),
@@ -64,13 +64,17 @@ const useStyles = makeStyles(theme => ({
       cursor: "pointer",
     }
   },
-  cardsContainer: {
+  cardText: {
+    // if screen size is smaller than 600px (xs), change font size
+    [theme.breakpoints.down('xs')]: {
+      fontSize: 14
+    }
   },
   cardsGridContainer: {
     height: 700,
     maxWidth: 500,
-    // if screen size is smaller than 600px (sm), change height & width
-    [theme.breakpoints.down('sm')]: {
+    // if screen size is smaller than 600px (xs), change height & width
+    [theme.breakpoints.down('xs')]: {
       height: 400,
       maxWidth: 300
     },
@@ -132,6 +136,7 @@ function CitiesCards(props) {
         />
         <CardContent>
             <Typography
+              className={classes.cardText}
               gutterBottom
               variant="h5"
               component="h2"
@@ -156,7 +161,6 @@ function CitiesCards(props) {
       }}
     >
       <Box
-        className={classes.cardsContainer}
         role="tabpanel"
         hidden={props.value !== props.index}
         id={`cities-tabpanel-${props.index}`}
