@@ -133,7 +133,6 @@ function Activities(props) {
 
   // handle click on tab for manual change of tabs
   const handleClick = (event, newValue) => {
-    console.log("handleChange has been triggered");
     setValue(newValue);
   };
 
@@ -187,7 +186,6 @@ function Activities(props) {
 }
 
 function mapStateToProps(state, ownProps) {
-  
   const {cityName} = ownProps;
   const {itineraryName} = ownProps;
 
