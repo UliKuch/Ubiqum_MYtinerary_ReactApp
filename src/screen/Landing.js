@@ -89,6 +89,10 @@ const useStyles = makeStyles(theme => ({
     maxHeight: 10,
     minWidth: 10
   }, 
+  cardContent: {
+    display: "flex",
+    justifyContent: "center"
+  }
 }));
 
 
@@ -134,7 +138,9 @@ function CitiesCards(props) {
           component="img"
           title={"Image for " + city.name}
         />
-        <CardContent>
+        <CardContent
+          className={classes.cardContent}
+        >
             <Typography
               className={classes.cardText}
               gutterBottom
