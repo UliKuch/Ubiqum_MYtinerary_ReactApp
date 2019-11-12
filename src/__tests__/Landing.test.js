@@ -1,6 +1,6 @@
 import React from 'react';
 import { shallow } from 'enzyme';
-import { Landing } from './Landing';
+import { Landing } from '../screen/Landing';
 import toJson from 'enzyme-to-json';
 
 
