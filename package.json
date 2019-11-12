@@ -47,6 +47,7 @@
   },
   "devDependencies": {
     "enzyme-to-json": "^3.4.2",
-    "jest": "^24.9.0"
+    "jest": "^24.9.0",
+    "redux-mock-store": "^1.5.3"
   }
 }
