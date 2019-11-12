@@ -65,12 +65,9 @@ export function fetchActivities(cityName, itineraryName, token) {
         + "/itineraries/" + itineraryName, {
           // put token in header if token exists
           headers:
-          token ?
-          {
-            Authorization: "Bearer " + token 
-          }
-          :
-          {}
+            token
+            ? { Authorization: "Bearer " + token }
+            : {}
         })
       .then(
         res => res.json(),
@@ -95,10 +92,11 @@ export function postActivity(cityName, itineraryName, activity, token) {
     try {
       const response = await axios.post(
         `http://localhost:5000/cities/${cityName}/${itineraryName}/add-activity`,
-        activity,
-        {headers: {
+        activity, {
+          headers: {
             "Authorization": "Bearer " + token,
-        }}
+          }
+        }
       )
       dispatch(fetchActivities(cityName, itineraryName, token))
       dispatch(postActivitySuccess(itineraryName));
