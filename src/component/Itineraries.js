@@ -57,6 +57,17 @@ const useStyles = makeStyles(theme => ({
     maxWidth: 300,
     margin: theme.spacing(2)
   },
+  form: {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    width: "100%"
+  },
+  textField: {
+    maxWidth: 300,
+    width: "100%",
+    margin: theme.spacing(1)
+  }
 }))
 
 function AddActivity(props) {
@@ -78,7 +89,9 @@ function AddActivity(props) {
   }
 
   return (
-    <form>
+    <form
+      className={classes.form}
+    >
       <Button
         variant="contained"
         color="secondary"
@@ -97,14 +110,15 @@ function AddActivity(props) {
             placeholder="Enter title of your activity"
             value={values.title}
             onChange={handleChangeTextField("title")}
+            className={classes.textField}
           />
           <TextField
-          required
+            required
             label="Activity Image"
             placeholder="Enter url to image"
             value={values.img}
             onChange={handleChangeTextField("img")}
-          
+            className={classes.textField}          
           />
           <Button
             variant="contained"
