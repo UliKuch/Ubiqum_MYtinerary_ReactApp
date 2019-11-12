@@ -79,16 +79,17 @@ export function fetchCities(token) {
       {}
     })
       .then(
-        res => res.json(),
-        // not using catch, see redux documentation (async actions)
-        err => {
-          dispatch(fetchCitiesFailure())
-          console.log("An error occurred.", err)
-        }
+        res => res.json()
       )
       .then(data =>
         dispatch(fetchCitiesSuccess(data))
       )
+      // using catch in spite of what redux documentation on async actions says
+        // because solution suggested there does not work
+      .catch(err => {
+        console.log("An error occurred.", err);
+        return dispatch(fetchCitiesFailure())
+      })
   }
 }
 
@@ -110,15 +111,16 @@ export function findCity(city, token) {
       {}
     })
       .then(
-        res => res.json(),
-        // not using catch, see redux documentation (async actions)
-        err => {
-          dispatch(findCityFailure())
-          console.log("An error occurred. Maybe the requested city is not in our database.", err)
-        }
+        res => res.json()
       )
       .then(data =>
         dispatch(findCitySuccess(data))
       )
+      // using catch in spite of what redux documentation on async actions says
+        // because solution suggested there does not work
+      .catch(err => {
+        console.log("An error occurred. Maybe the requested city is not in our database.", err);
+        return dispatch(findCityFailure());
+      })
   }
 }

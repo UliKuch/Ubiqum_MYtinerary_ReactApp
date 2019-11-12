@@ -61,8 +61,7 @@ export function fetchActivities(cityName, itineraryName, token) {
   return function(dispatch) {
     dispatch(fetchActivitiesRequest(itineraryName))
 
-    return fetch("http://localhost:5000/cities/" + cityName
-        + "/itineraries/" + itineraryName, {
+    return fetch(`http://localhost:5000/cities/${cityName}/itineraries/${itineraryName}`, {
           // put token in header if token exists
           headers:
             token
@@ -70,16 +69,17 @@ export function fetchActivities(cityName, itineraryName, token) {
             : {}
         })
       .then(
-        res => res.json(),
-        // not using catch, see redux documentation (async actions)
-        err => {
-          dispatch(fetchActivitiesFailure(itineraryName))
-          console.log("An error occurred.", err)
-        }
+        res => res.json()
       )
       .then(data =>
         dispatch(fetchActivitiesSuccess(itineraryName, data))
       )
+      // using catch in spite of what redux documentation on async actions says
+        // because solution suggested there does not work
+      .catch(err => {
+        console.log("An error occurred.", err);
+        return dispatch(fetchActivitiesFailure(itineraryName))
+      })
   }
 }
 

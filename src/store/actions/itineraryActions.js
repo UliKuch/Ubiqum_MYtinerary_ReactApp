@@ -162,16 +162,17 @@ export function fetchItineraries(cityName, token) {
       {}
     })
       .then(
-        res => res.json(),
-        // not using catch, see redux documentation (async actions)
-        err => {
-          dispatch(fetchItinerariesFailure())
-          console.log("An error occurred.", err)
-        }
+        res => res.json()
       )
       .then(data =>
         dispatch(fetchItinerariesSuccess(data))
       )
+      // using catch in spite of what redux documentation on async actions says
+        // because solution suggested there does not work    
+      .catch(err => {
+        console.log("An error occurred.", err);
+        return dispatch(fetchItinerariesFailure())
+      })
   }
 }
 
