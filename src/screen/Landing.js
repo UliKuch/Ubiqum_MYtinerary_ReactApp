@@ -282,7 +282,10 @@ export function Landing(props) {
             (Date.now() - tokenCreated));
       }
 
-      props.history.push("/")
+      // route to landing page w/o token in url
+      props.history.push("/");
+      // reload page to ensure user is displayed as logged in
+      window.location.reload();
     };
 
     props.fetchCities.call(null, token);
