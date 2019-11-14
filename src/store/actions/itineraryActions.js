@@ -1,5 +1,8 @@
 const axios = require('axios');
 
+// backend url
+const url = require("../../config.js");
+
 // ----- action types -----
 export const FETCH_ITINERARIES_REQUEST = "FETCH_ITINERARIES_REQUEST";
 export const FETCH_ITINERARIES_FAILURE = "FETCH_ITINERARIES_FAILURE";
@@ -151,15 +154,12 @@ export function fetchItineraries(cityName, token) {
   return function(dispatch) {
     dispatch(fetchItinerariesRequest())
 
-    return fetch("http://localhost:5000/cities/" + cityName + "/itineraries", {
+    return fetch(`${url}/cities/${cityName}/itineraries`, {
       // put token in header if token exists
       headers:
-      token ?
-      {
-        Authorization: "Bearer " + token 
-      }
-      :
-      {}
+      token
+      ? { Authorization: `Bearer ${token}` }
+      : {}
     })
       .then(
         res => res.json()
@@ -184,14 +184,12 @@ export function fetchComments(itin, cityName, token) {
 
     try {
       const response = await axios.get(
-        "http://localhost:5000/cities/" + cityName
-        + "/itineraries/" + itin + "/comments", {
+        `${url}/cities/${cityName}/itineraries/${itin}/comments`, {
         // put token in header if token exists
         headers:
-          token ?
-          { Authorization: "Bearer " + token }
-          :
-          {}
+          token
+          ? { Authorization: `Bearer ${token}` }
+          : {}
         }
       )
       return dispatch(fetchCommentsSuccess(itin, response.data))
@@ -212,11 +210,10 @@ export function postComment(commentBody, itin, cityName, token) {
       const body = {commentBody: commentBody}
 
       await axios.post(
-        "http://localhost:5000/cities/" + cityName
-        + "/itineraries/" + itin + "/comment",
-        body,
-        {headers: {
-            "Authorization": "Bearer " + token,
+        `${url}/cities/${cityName}/itineraries/${itin}/comment`,
+        body, {
+        headers: {
+            Authorization: `Bearer ${token}`,
         }}
       )
       return dispatch(postCommentSuccess(itin))
@@ -240,11 +237,10 @@ export function editComment(commentBody, commentId, itin, cityName, token) {
       }
 
       await axios.put(
-        "http://localhost:5000/cities/" + cityName
-        + "/itineraries/" + itin + "/comment",
-        body,
-        {headers: {
-            "Authorization": "Bearer " + token,
+        `${url}/cities/${cityName}/itineraries/${itin}/comment`,
+        body, {
+        headers: {
+            Authorization: `Bearer ${token}`,
         }}
       )
       return dispatch(editCommentSuccess(itin))
@@ -263,10 +259,9 @@ export function deleteComment(commentId, itin, cityName, token) {
 
     try {
       await axios.delete(
-        "http://localhost:5000/cities/" + cityName
-        + "/itineraries/" + itin + "/comment/" + commentId,
-        {headers: {
-            "Authorization": "Bearer " + token,
+        `${url}/cities/${cityName}/itineraries/${itin}/comment/${commentId}`, {
+        headers: {
+            Authorization: `Bearer ${token}`,
         }}
       )
       return dispatch(deleteCommentSuccess(itin))
@@ -285,10 +280,10 @@ export function postItinerary(itin, cityName, token) {
 
     try {
       const response = await axios.post(
-        `http://localhost:5000/cities/${cityName}/add-itinerary`,
-        itin,
-        {headers: {
-            "Authorization": "Bearer " + token,
+        `${url}/cities/${cityName}/add-itinerary`,
+        itin, {
+        headers: {
+            Authorization: `Bearer ${token}`,
         }}
       )
       dispatch(postItinerarySuccess())

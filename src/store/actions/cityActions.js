@@ -1,3 +1,6 @@
+// backend url
+const url = require("../../config.js");
+
 // ----- action types -----
 export const FETCH_CITIES_REQUEST = "FETCH_CITIES_REQUEST";
 export const FETCH_CITIES_FAILURE = "FETCH_CITIES_FAILURE";
@@ -68,15 +71,12 @@ export function fetchCities(token) {
   return function(dispatch) {
     dispatch(fetchCitiesRequest())
 
-    return fetch("http://localhost:5000/cities/all", {
+    return fetch(`${url}/cities/all`, {
       // put token in header if token exists
       headers:
-      token ?
-      {
-        Authorization: "Bearer " + token 
-      }
-      :
-      {}
+      token 
+      ? { Authorization: `Bearer ${token}` }
+      : {}
     })
       .then(
         res => res.json()
@@ -100,15 +100,12 @@ export function findCity(city, token) {
   return function(dispatch) {
     dispatch(findCityRequest())
 
-    return fetch(`http://localhost:5000/cities/${city}`, {
+    return fetch(`${url}/cities/${city}`, {
       // put token in header if token exists
       headers:
-      token ?
-      {
-        Authorization: "Bearer " + token 
-      }
-      :
-      {}
+      token
+      ? { Authorization: `Bearer ${token}` }
+      : {}
     })
       .then(
         res => res.json()

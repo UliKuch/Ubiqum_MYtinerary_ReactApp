@@ -1,5 +1,8 @@
 const axios = require('axios');
 
+// backend url
+const url = require("../../config.js");
+
 // ----- action types -----
 export const POST_USER_REQUEST = "POST_USER_REQUEST";
 export const POST_USER_FAILURE = "POST_USER_FAILURE";
@@ -129,7 +132,7 @@ export function postUser(user) {
     dispatch(postUserRequest())
     try {
       const response = await axios.post(
-        "http://localhost:5000/user/", user
+        `${url}/user/`, user
       );
 
       // Logging new user in
@@ -156,7 +159,7 @@ export function loginUser(user) {
     dispatch(loginUserRequest())
     try {
       const response = await axios.post(
-        "http://localhost:5000/user/login/", user
+        `${url}/user/login/`, user
       );
 
       window.localStorage.setItem("userToken", response.data.token);
@@ -177,8 +180,8 @@ export function logoutUser(token) {
     dispatch(logoutUserRequest())
     try {
       await axios.post(
-        "http://localhost:5000/user/logout/", null, {
-          headers: { Authorization: "Bearer " + token }
+        `${url}/user/logout/`, null, {
+          headers: { Authorization: `Bearer ${token}` }
         }
       );
 
@@ -200,10 +203,8 @@ export function getFavitin(token) {
     dispatch(getFavitinRequest())
     try {
       const response = await axios.get(
-        "http://localhost:5000/user/favoriteItineraries", {
-          headers: {
-            "Authorization": "Bearer " + token,
-          }
+        `${url}/user/favoriteItineraries`, {
+          headers: { Authorization: `Bearer ${token}` }
         }
       );
 
@@ -223,8 +224,8 @@ export function postFavitin(itin, token) {
     try {
       const body = {itineraryTitle: itin};
       await axios.post(
-        "http://localhost:5000/user/favoriteItineraries", body, {
-          headers: { Authorization: "Bearer " + token }
+        `${url}/user/favoriteItineraries`, body, {
+          headers: { Authorization: `Bearer ${token}` }
         }
       );
 

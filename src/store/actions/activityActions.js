@@ -1,5 +1,8 @@
 const axios = require('axios');
 
+// backend url
+const url = require("../../config.js");
+
 // ----- action types -----
 export const FETCH_ACTIVITIES_REQUEST = "FETCH_ACTIVITIES_REQUEST";
 export const FETCH_ACTIVITIES_FAILURE = "FETCH_ACTIVITIES_FAILURE";
@@ -61,11 +64,11 @@ export function fetchActivities(cityName, itineraryName, token) {
   return function(dispatch) {
     dispatch(fetchActivitiesRequest(itineraryName))
 
-    return fetch(`http://localhost:5000/cities/${cityName}/itineraries/${itineraryName}`, {
+    return fetch(`${url}/cities/${cityName}/itineraries/${itineraryName}`, {
           // put token in header if token exists
           headers:
             token
-            ? { Authorization: "Bearer " + token }
+            ? { Authorization: `Bearer ${token}` }
             : {}
         })
       .then(
@@ -91,10 +94,10 @@ export function postActivity(cityName, itineraryName, activity, token) {
 
     try {
       const response = await axios.post(
-        `http://localhost:5000/cities/${cityName}/${itineraryName}/add-activity`,
+        `${url}/cities/${cityName}/${itineraryName}/add-activity`,
         activity, {
           headers: {
-            "Authorization": "Bearer " + token,
+            Authorization: `Bearer ${token}`,
           }
         }
       )
