@@ -293,9 +293,13 @@ function AddItinerary(props) {
   const token = window.localStorage.getItem("userToken")
 
   // fetch city info
-  React.useEffect(() => {  
+  React.useEffect(() => {
+    if (!token) {
+      props.history.push("/")
+    }
+
     props.findCity.call(null, cityNameFromUrl, token)
-  }, [cityNameFromUrl, props.findCity, token])
+  }, [props.history, cityNameFromUrl, props.findCity, token])
   
   const handleSubmit = async (event, itin) => {
     // prevents page reload
