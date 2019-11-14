@@ -44,7 +44,7 @@ export class App extends React.Component {
       // check if token is expired and log user out if it is
       // see https://github.com/auth0/jwt-decode/issues/53 for more info
       if (tokenPlain.exp < currentTime) {
-        this.props.logoutUser(tokenPlain.email)
+        this.props.logoutUser(token);
 
       // store user info in store if token is not expired
       } else {
@@ -91,7 +91,7 @@ function mapStateToProps(state) {
 const mapDispatchToProps = dispatch => {
   return {
     storeUserInfo: userInfo => dispatch(storeUserInfo(userInfo)),
-    logoutUser: email => dispatch(logoutUser(email))
+    logoutUser: token => dispatch(logoutUser(token))
   }
 };
 
