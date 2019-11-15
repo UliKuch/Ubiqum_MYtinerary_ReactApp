@@ -23,7 +23,6 @@ function Footer() {
   let history = useHistory();
 
   function handleGoBack() {
-    console.log(history);
     // not sure if this is save; especially with login and google login routes
     history.goBack();
   }
