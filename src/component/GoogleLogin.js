@@ -7,6 +7,7 @@ import {
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 
+const url = require("../../config.js");
 
 const useStyles = makeStyles(theme => ({
   submitButton: {
@@ -26,7 +27,7 @@ function GoogleLogin() {
         variant="contained"
         type="button"
         className={classes.submitButton}
-        href="http://localhost:5000/user/google"
+        href={`${url}/user/google`}
       >
         Login with Google
       </Button>
